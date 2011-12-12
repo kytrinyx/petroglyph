@@ -102,7 +102,7 @@ describe Petroglyph::Node do
     test.data.should eq({:whatever => 'awesome'})
   end
 
-  xit "lets local variables take precedence over helper methods" do
+  it "lets local variables take precedence over helper methods" do
     def stuff
       "okay"
     end
