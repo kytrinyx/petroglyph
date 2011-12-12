@@ -101,7 +101,7 @@ describe Petroglyph do
     t.render.should eq({:drink => "tea", :type => "wulong"}.to_json)
   end
 
-  xit "operates on objects" do
+  it "operates on objects" do
     tea = OpenStruct.new(:type => 'tea', :temperature => 'hot')
 
     t = Petroglyph::Template.build(:drink => tea) do

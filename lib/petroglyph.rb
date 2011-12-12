@@ -10,16 +10,30 @@ module Petroglyph
     end
 
     def node(name, value = nil, &block)
+      if name.is_a?(Hash)
+        @object = name.values.first
+        name = name.keys.first
+      end
+
       if block_given?
         @root = @root.merge(name => yield)
       else
         @root = @root.merge(name => value)
       end
+
       @root
     end
 
     def merge(hash)
       @root = @root.merge hash
+    end
+
+    def attributes(*args)
+      fragment = {}
+      args.each do |method|
+        fragment[method] = @object.send(method)
+      end
+      fragment
     end
 
     def method_missing(method, *args, &block)
