@@ -20,8 +20,6 @@ module Petroglyph
       else
         @root = @root.merge(name => value)
       end
-
-      @root
     end
 
     def merge(hash)
