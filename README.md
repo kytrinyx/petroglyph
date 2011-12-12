@@ -65,9 +65,11 @@ Iterate through collections:
 You can also explicitly reference each item in the collection if you need to:
 
     collection :teas => teas do |tea|
-      attributes :type
+      node :tea do
+        attributes :type
 
+      end
       node :provider, lookup_provider_for(tea)
     end
-    => '{"teas":[{"type":"wulong","provider":"Imperial Teas"},{"type":"wulong","provider":"House of Tea"}]}'
+    => '{"teas":[{"tea":{"type":"wulong"},{"provider":"Imperial Teas"}},{"tea":{"type":"wulong"},{"provider":"House of Tea"}}]}'
 
