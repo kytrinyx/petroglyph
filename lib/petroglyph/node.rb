@@ -16,11 +16,16 @@ module Petroglyph
       node = Node.new
       node.name = name
       if block_given?
-        node.value = yield
+        result = yield
+        if result.is_a? String
+          node.value = result
+        else
+          node.value = node.merge result
+        end
       else
         node.value = value
       end
-      @value = @value.merge node.to_hash
+      merge node.to_hash
     end
 
     def attributes(*args)
@@ -28,7 +33,7 @@ module Petroglyph
       args.each do |method|
         fragment[method] = @object.send(method)
       end
-      @value.merge! fragment
+      merge fragment
     end
 
     def to_hash
