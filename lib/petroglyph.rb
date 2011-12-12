@@ -22,6 +22,10 @@ module Petroglyph
       end
     end
 
+    def to_hash
+      @root
+    end
+
     def merge(hash)
       @root = @root.merge hash
     end
@@ -60,7 +64,9 @@ module Petroglyph
     def self.build(locals = {}, &block)
       parent_context = eval "self", block.binding
       t = self.new
-      t.data = Fragment.new(parent_context, locals).instance_eval(&block)
+      fragment = Fragment.new(parent_context, locals)
+      fragment.instance_eval(&block)
+      t.data = fragment.to_hash
       t
     end
 

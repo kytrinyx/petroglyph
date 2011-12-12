@@ -8,7 +8,9 @@ class TestContext
   def self.test(locals = {}, &block)
     parent_context = eval "self", block.binding
     t = self.new
-    t.data = Petroglyph::Node.new(parent_context, locals).instance_eval(&block)
+    node = Petroglyph::Node.new(parent_context, locals)
+    node.instance_eval(&block)
+    t.data = node.value
     t
   end
 end
@@ -121,13 +123,11 @@ describe Petroglyph::Node do
     xit "nests nodes" do
       test = TestContext.test do
         node :whatever do
-          node :stuff do
-            node :finally, "awesome"
-          end
+          node(:stuff) { "awesome" }
         end
       end
 
-      test.data.should eq({:whatever => {:stuff => {:finally => 'awesome'}}})
+      test.data.should eq({:whatever => {:stuff => 'awesome'}})
     end
   end
 
