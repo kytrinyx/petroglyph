@@ -15,102 +15,120 @@ end
 
 describe Petroglyph::Node do
 
-  it "resolves to a hash given a name and a simple value" do
-    node = Petroglyph::Node.new
-    node.name = :whatever
-    node.value = "some data"
+  describe "a basic node" do
+    let(:node) { Petroglyph::Node.new }
 
-    node.to_hash.should eq({:whatever => 'some data'})
+    it "takes a name and a value" do
+      node.name = :whatever
+      node.value = "some data"
+
+      node.to_hash.should eq({:whatever => 'some data'})
+    end
+
+    it "merges in a complex value" do
+      node.name = :whatever
+      node.merge({:stuff => 'awesome'})
+
+      node.to_hash.should eq({:whatever => {:stuff => 'awesome'}})
+    end
+
+    it "adds simple string nodes" do
+      node.name = :whatever
+      node.node :stuff, "awesome"
+
+      node.to_hash.should eq({:whatever => {:stuff => 'awesome'}})
+    end
+
+    it "adds string nodes in a block" do
+      node.name = :whatever
+      node.node(:stuff) { "awesome" }
+
+      node.to_hash.should eq({:whatever => {:stuff => 'awesome'}})
+    end
+
+    it "evaluates attributes on an object" do
+      node.name = :ai
+      node.object = OpenStruct.new(:name => 'HAL 9000', :temperament => 'psychotic', :garbage => 'junk')
+      node.attributes(:name, :temperament)
+
+      node.to_hash.should eq({:ai => {:name => 'HAL 9000', :temperament => 'psychotic'}})
+    end
+
+    it "evaluates attributes on a hash" do
+      node.name = :ai
+      node.object = {:name => 'HAL 9000', :temperament => 'psychotic', :garbage => 'junk'}
+      node.attributes(:name, :temperament)
+
+      node.to_hash.should eq({:ai => {:name => 'HAL 9000', :temperament => 'psychotic'}})
+    end
   end
 
-  it "merges in a complex value" do
-    node = Petroglyph::Node.new
-    node.name = :whatever
-    node.merge({:stuff => 'awesome'})
+  context "within a block" do
+    it "handles sibling nodes" do
+      test = TestContext.test do
+        node :whatever, "nevermind"
+        node :stuff, "awesome"
+      end
 
-    node.to_hash.should eq({:whatever => {:stuff => 'awesome'}})
-  end
+      test.data.should eq({:whatever => "nevermind", :stuff => "awesome"})
+    end
 
-  it "has nodes" do
-    node = Petroglyph::Node.new
-    node.name = :whatever
-    node.node :stuff, "awesome"
-
-    node.to_hash.should eq({:whatever => {:stuff => 'awesome'}})
-  end
-
-  it "evaluates attributes on an object" do
-    node = Petroglyph::Node.new
-    node.name = :ai
-    node.object = OpenStruct.new(:name => 'HAL 9000', :temperament => 'psychotic')
-    node.attributes(:name, :temperament)
-
-    node.to_hash.should eq({:ai => {:name => 'HAL 9000', :temperament => 'psychotic'}})
-  end
-
-  xit "nests nodes" do
-    test = TestContext.test do
-      node :whatever do
+    it "handles sibling nodes as blocks" do
+      test = TestContext.test do
+        node :whatever do
+          "nevermind"
+        end
         node :stuff do
-          node :finally, "awesome"
+          {:too => :cool}
         end
       end
+
+      test.data.should eq({:whatever => "nevermind", :stuff => {:too => :cool}})
     end
 
-    test.data.should eq({:whatever => {:stuff => {:finally => 'awesome'}}})
-  end
-
-  it "handles siblings" do
-    test = TestContext.test do
-      node :whatever, "nevermind"
-      node :stuff, "awesome"
-    end
-
-    test.data.should eq({:whatever => "nevermind", :stuff => "awesome"})
-  end
-
-  it "handles other siblings" do
-    test = TestContext.test do
-      node :whatever do
-        "nevermind"
+    it "takes local variables" do
+      test = TestContext.test(:stuff => 'awesome') do
+        node :whatever, stuff
       end
-      node :stuff do
+
+      test.data.should eq({:whatever => 'awesome'})
+    end
+
+    it "can handle helper methods" do
+      def stuff
         "awesome"
       end
+
+      test = TestContext.test do
+        node :whatever, stuff
+      end
+
+      test.data.should eq({:whatever => 'awesome'})
     end
 
-    test.data.should eq({:whatever => "nevermind", :stuff => "awesome"})
+    it "lets local variables take precedence over helper methods" do
+      def stuff
+        "okay"
+      end
+
+      test = TestContext.test(:stuff => 'awesome') do
+        node :whatever, stuff
+      end
+
+      test.data.should eq({:whatever => 'awesome'})
+    end
+
+    xit "nests nodes" do
+      test = TestContext.test do
+        node :whatever do
+          node :stuff do
+            node :finally, "awesome"
+          end
+        end
+      end
+
+      test.data.should eq({:whatever => {:stuff => {:finally => 'awesome'}}})
+    end
   end
 
-  it "takes local variables" do
-    test = TestContext.test(:stuff => 'awesome') do
-      node :whatever, stuff
-    end
-
-    test.data.should eq({:whatever => 'awesome'})
-  end
-
-  it "can handle helper methods" do
-    def stuff
-      "awesome"
-    end
-
-    test = TestContext.test do
-      node :whatever, stuff
-    end
-
-    test.data.should eq({:whatever => 'awesome'})
-  end
-
-  it "lets local variables take precedence over helper methods" do
-    def stuff
-      "okay"
-    end
-
-    test = TestContext.test(:stuff => 'awesome') do
-      node :whatever, stuff
-    end
-
-    test.data.should eq({:whatever => 'awesome'})
-  end
 end

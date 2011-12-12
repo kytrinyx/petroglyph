@@ -20,7 +20,7 @@ module Petroglyph
         if result.is_a? String
           node.value = result
         else
-          node.value = node.merge result
+          node.merge result
         end
       else
         node.value = value
@@ -31,7 +31,11 @@ module Petroglyph
     def attributes(*args)
       fragment = {}
       args.each do |method|
-        fragment[method] = @object.send(method)
+        if @object.respond_to?(method)
+          fragment[method] = @object.send(method)
+        else
+          fragment[method] = @object[method]
+        end
       end
       merge fragment
     end
