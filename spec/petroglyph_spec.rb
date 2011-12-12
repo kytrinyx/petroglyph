@@ -122,7 +122,7 @@ describe Petroglyph do
       end
     end
 
-    t.render.should eq({:drinks => [{:drink => {:type => 'tea', :temperature => 'hot'}}]}.to_json)
+    t.render.should eq({:drinks => [{:type => 'tea', :temperature => 'hot'}]}.to_json)
   end
 
   xit "operates intelligently on enumerables" do
