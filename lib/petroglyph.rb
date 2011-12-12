@@ -34,6 +34,17 @@ module Petroglyph
       fragment
     end
 
+    def collection(input, &block)
+      name = input.keys.first
+      values = input.values.first
+      results = []
+      values.each do |value|
+        @object = value
+        results << block.call
+      end
+      node(name, results)
+    end
+
     def method_missing(method, *args, &block)
       if @locals.has_key?(method)
         @locals[method]
