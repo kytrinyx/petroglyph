@@ -5,10 +5,10 @@ class TestContext
 
   attr_accessor :data
 
-  def self.test(&block)
+  def self.test(locals = {}, &block)
     parent_context = eval "self", block.binding
     t = self.new
-    t.data = Petroglyph::Node.new(parent_context, {}).instance_eval(&block)
+    t.data = Petroglyph::Node.new(parent_context, locals).instance_eval(&block)
     t
   end
 end
@@ -80,5 +80,37 @@ describe Petroglyph::Node do
     end
 
     test.data.should eq({:whatever => "nevermind", :stuff => "awesome"})
+  end
+
+  it "takes local variables" do
+    test = TestContext.test(:stuff => 'awesome') do
+      node :whatever, stuff
+    end
+
+    test.data.should eq({:whatever => 'awesome'})
+  end
+
+  it "can handle helper methods" do
+    def stuff
+      "awesome"
+    end
+
+    test = TestContext.test do
+      node :whatever, stuff
+    end
+
+    test.data.should eq({:whatever => 'awesome'})
+  end
+
+  xit "lets local variables take precedence over helper methods" do
+    def stuff
+      "okay"
+    end
+
+    test = TestContext.test(:stuff => 'awesome') do
+      node :whatever, stuff
+    end
+
+    test.data.should eq({:whatever => 'awesome'})
   end
 end
