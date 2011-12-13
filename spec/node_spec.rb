@@ -17,55 +17,25 @@ end
 
 describe Petroglyph::Node do
 
-  describe "a basic node" do
-    let(:node) { Petroglyph::Node.new }
-
-    it "takes a name and a value" do
-      node.name = :whatever
-      node.value = "some data"
-
-      node.to_hash.should eq({:whatever => 'some data'})
-    end
-
-    it "merges in a complex value" do
-      node.name = :whatever
-      node.merge({:stuff => 'awesome'})
-
-      node.to_hash.should eq({:whatever => {:stuff => 'awesome'}})
-    end
-
-    it "adds simple string nodes" do
-      node.name = :whatever
-      node.node :stuff, "awesome"
-
-      node.to_hash.should eq({:whatever => {:stuff => 'awesome'}})
-    end
-
-    it "adds string nodes in a block" do
-      node.name = :whatever
-      node.node(:stuff) { "awesome" }
-
-      node.to_hash.should eq({:whatever => {:stuff => 'awesome'}})
-    end
-
-    it "evaluates attributes on an object" do
-      node.name = :ai
-      node.object = OpenStruct.new(:name => 'HAL 9000', :temperament => 'psychotic', :garbage => 'junk')
-      node.attributes(:name, :temperament)
-
-      node.to_hash.should eq({:ai => {:name => 'HAL 9000', :temperament => 'psychotic'}})
-    end
-
-    it "evaluates attributes on a hash" do
-      node.name = :ai
-      node.object = {:name => 'HAL 9000', :temperament => 'psychotic', :garbage => 'junk'}
-      node.attributes(:name, :temperament)
-
-      node.to_hash.should eq({:ai => {:name => 'HAL 9000', :temperament => 'psychotic'}})
-    end
-  end
-
   context "within a block" do
+    it "takes a simple string value" do
+      test = TestContext.test do
+        node :whatever, "nevermind"
+      end
+
+      test.data.should eq({:whatever => "nevermind"})
+    end
+
+    it "can merge in a block" do
+      test = TestContext.test do
+        node :whatever do
+          merge(:stuff => {:no => :way})
+        end
+      end
+
+      test.data.should eq({:whatever => {:stuff => {:no => :way}}})
+    end
+
     it "handles sibling nodes" do
       test = TestContext.test do
         node :whatever, "nevermind"
@@ -77,15 +47,23 @@ describe Petroglyph::Node do
 
     it "handles sibling nodes as blocks" do
       test = TestContext.test do
-        node :whatever do
-          "nevermind"
-        end
+        node :whatever, "nevermind"
         node :stuff do
-          {:too => :cool}
+          merge(:too => :cool)
         end
       end
 
       test.data.should eq({:whatever => "nevermind", :stuff => {:too => :cool}})
+    end
+
+    it "nests nodes" do
+      test = TestContext.test do
+        node :whatever do
+          node :stuff, "awesome"
+        end
+      end
+
+      test.data.should eq({:whatever => {:stuff => 'awesome'}})
     end
 
     it "takes local variables" do
@@ -120,28 +98,28 @@ describe Petroglyph::Node do
       test.data.should eq({:whatever => 'awesome'})
     end
 
-    xit "nests nodes" do
+    it "evaluates objects" do
+      hal = OpenStruct.new(:name => 'HAL 9000', :temperament => 'psychotic', :garbage => 'junk')
+
       test = TestContext.test do
-        node :whatever do
-          node(:stuff) { "awesome" }
+        node :hal => hal do
+          attributes :name, :temperament
         end
       end
 
-      test.data.should eq({:whatever => {:stuff => 'awesome'}})
+      test.data.should eq({:hal => {:name => 'HAL 9000', :temperament => 'psychotic'}})
     end
 
-    xit "sanity check (can probably just delete it): handles nested siblings" do
+    it "evaluates hashes" do
+      hal = {:name => 'HAL 9000', :temperament => 'psychotic', :garbage => 'junk'}
+
       test = TestContext.test do
-        node :whatever do
-          node(:stuff) { "awesome" }
-          node :yeah, "yeah"
-          node :no do
-            "way"
-          end
+        node :hal => hal do
+          attributes :name, :temperament
         end
       end
 
-      test.data.should eq({:whatever => {:stuff => 'awesome', :yeah => "yeah", :no => "way"}})
+      test.data.should eq({:hal => {:name => 'HAL 9000', :temperament => 'psychotic'}})
     end
   end
 

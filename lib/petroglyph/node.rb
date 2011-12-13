@@ -1,31 +1,41 @@
 module Petroglyph
   class Node
-    attr_accessor :name, :value, :object
+    attr_accessor :value, :object
 
-    def initialize(parent_context = nil, locals = {})
-      @parent_context = parent_context
+    def initialize(template_context = nil, locals = {}, parent_node = nil)
+      @template_context = template_context
       @locals = locals
-      @value = {}
+      @parent_node = parent_node
+      @value = nil
+    end
+
+    def sub_node(object = nil)
+      node = Node.new(@template_context, @locals, self)
+      node.object = object
+      node
     end
 
     def node(name, value = nil, &block)
-      node = Node.new
-      node.name = name
+      @value ||= {}
+      node = nil
+      if name.is_a?(Hash)
+        node = sub_node(name.values.first)
+        name = name.keys.first
+      else
+        node = sub_node
+      end
 
       if block_given?
-        node.value = yield
+        node.instance_eval(&block)
+        @value[name] = node.value if node.value
       else
-        node.value = value
+        @value[name] = value
       end
-      merge node.to_hash
     end
 
     def merge(hash)
-      @value = @value.merge(hash)
-    end
-
-    def to_hash
-      {name => value}
+      @value ||= {}
+      @value.merge!(hash)
     end
 
     def attributes(*args)
@@ -44,7 +54,7 @@ module Petroglyph
       if @locals.has_key?(method)
         @locals[method]
       else
-        @parent_context.send method, *args, &block
+        @template_context.send method, *args, &block
       end
     end
 
