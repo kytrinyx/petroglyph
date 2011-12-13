@@ -3,26 +3,67 @@ require 'petroglyph'
 
 describe Petroglyph do
 
-  it "adds a node with a simple value" do
-    t = Petroglyph::Template.build do
-      node :drink, "tea"
-    end
-
-    t.render.should eq({:drink => "tea"}.to_json)
+  it "renders to json" do
+    template = Petroglyph::Template.new
+    template.data = {:something => :borrowed}
+    template.render.should eq('{"something":"borrowed"}')
   end
 
-  it "nests stuff arbitrarily deeply" do
+  it "takes a simple string value" do
+    template = Petroglyph::Template.build do
+      node :whatever, "nevermind"
+    end
+
+    template.data.should eq(:whatever => "nevermind")
+  end
+
+  it "merges in a hash" do
     t = Petroglyph::Template.build do
-      node :drink do
-        node :tea do
-          node :temperature do
-            "hot"
-          end
-        end
+      tea = {:tea => {:temperature => 'hot', :type => 'wulong'}}
+      merge tea
+    end
+
+    t.data.should eq({:tea => {:temperature => "hot", :type => 'wulong'}})
+  end
+
+  it "merges within a block" do
+    template = Petroglyph::Template.build do
+      node :whatever do
+        merge(:stuff => {:no => :way})
       end
     end
 
-    t.render.should eq({:drink => {:tea => {:temperature => "hot"}}}.to_json)
+    template.data.should eq({:whatever => {:stuff => {:no => :way}}})
+  end
+
+  it "handles sibling nodes" do
+    template = Petroglyph::Template.build do
+      node :whatever, "nevermind"
+      node :stuff, "awesome"
+    end
+
+    template.data.should eq({:whatever => "nevermind", :stuff => "awesome"})
+  end
+
+  it "handles sibling nodes as blocks" do
+    template = Petroglyph::Template.build do
+      node :whatever, "nevermind"
+      node :stuff do
+        merge(:too => :cool)
+      end
+    end
+
+    template.data.should eq({:whatever => "nevermind", :stuff => {:too => :cool}})
+  end
+
+  it "nests nodes" do
+    template = Petroglyph::Template.build do
+      node :whatever do
+        node :stuff, "awesome"
+      end
+    end
+
+    template.data.should eq({:whatever => {:stuff => 'awesome'}})
   end
 
   it "uses regular ruby" do
@@ -32,88 +73,74 @@ describe Petroglyph do
         if false
           "cold"
         else
-          node(:tea) { "hot".upcase }
+          node(:tea) do
+            merge(:temperature => "hot".upcase)
+          end
         end
       end
 
     end
 
-    t.render.should eq({:drink => {:tea => "HOT"}}.to_json)
-  end
-
-  it "merges in a hash" do
-    t = Petroglyph::Template.build do
-      tea = {:tea => {:temperature => 'hot', :type => 'wulong'}}
-      merge tea
-    end
-
-    t.render.should eq({:tea => {:temperature => "hot", :type => 'wulong'}}.to_json)
+    t.data.should eq({:drink => {:tea => {:temperature => "HOT"}}})
   end
 
   it "takes local variables" do
-    t = Petroglyph::Template.build(:temperature => 'hot') do
-      node :tea do
-        node(:temperature) { temperature }
-      end
+    template = Petroglyph::Template.build(:stuff => 'awesome') do
+      node :whatever, stuff
     end
 
-    t.render.should eq({:tea => {:temperature => "hot"}}.to_json)
+    template.data.should eq({:whatever => 'awesome'})
   end
 
-  it "can handle helper methods" do
-    def temperature
-      "hot"
+  it "handles helper methods" do
+    def stuff
+      "awesome"
     end
 
-    t = Petroglyph::Template.build do
-      node :tea do
-        node(:temperature) { temperature }
-      end
+    template = Petroglyph::Template.build do
+      node :whatever, stuff
     end
 
-    t.render.should eq({:tea => {:temperature => "hot"}}.to_json)
+    template.data.should eq({:whatever => 'awesome'})
   end
 
   it "lets local variables take precedence over helper methods" do
-    def temperature
-      "warm"
+    def stuff
+      "okay"
     end
 
-    t = Petroglyph::Template.build(:temperature => 'hot') do
-      node :tea do
-        node(:temperature) { temperature }
-      end
+    template = Petroglyph::Template.build(:stuff => 'awesome') do
+      node :whatever, stuff
     end
 
-    t.render.should eq({:tea => {:temperature => "hot"}}.to_json)
+    template.data.should eq({:whatever => 'awesome'})
   end
 
-  it "makes sibling nodes" do
-    t = Petroglyph::Template.build do
-      node :drink do
-        "tea"
-      end
-      node :type do
-        "wulong"
-      end
-    end
+  it "evaluates objects" do
+    hal = OpenStruct.new(:name => 'HAL 9000', :temperament => 'psychotic', :garbage => 'junk')
 
-    t.render.should eq({:drink => "tea", :type => "wulong"}.to_json)
-  end
-
-  it "operates on objects" do
-    tea = OpenStruct.new(:type => 'tea', :temperature => 'hot')
-
-    t = Petroglyph::Template.build(:drink => tea) do
-      node :drink => drink do
-        attributes :type, :temperature
+    template = Petroglyph::Template.build do
+      node :hal => hal do
+        attributes :name, :temperament
       end
     end
 
-    t.render.should eq({:drink => {:type => 'tea', :temperature => 'hot'}}.to_json)
+    template.data.should eq({:hal => {:name => 'HAL 9000', :temperament => 'psychotic'}})
   end
 
-  it "operates on enumerables" do
+  it "evaluates hashes" do
+    hal = {:name => 'HAL 9000', :temperament => 'psychotic', :garbage => 'junk'}
+
+    template = Petroglyph::Template.build do
+      node :hal => hal do
+        attributes :name, :temperament
+      end
+    end
+
+    template.data.should eq({:hal => {:name => 'HAL 9000', :temperament => 'psychotic'}})
+  end
+
+  xit "operates on enumerables" do
     tea = OpenStruct.new(:type => 'tea', :temperature => 'hot')
 
     t = Petroglyph::Template.build(:drinks => [tea]) do
