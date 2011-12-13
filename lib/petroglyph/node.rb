@@ -33,6 +33,19 @@ module Petroglyph
       end
     end
 
+    def collection(input, &block)
+      @value ||= {}
+      name = input.keys.first
+      items = input.values.first
+      results = []
+      items.each do |item|
+        node = sub_node(item)
+        node.instance_exec(item, &block)
+        results << node.value
+      end
+      @value[name] = results
+    end
+
     def merge(hash)
       @value ||= {}
       @value.merge!(hash)

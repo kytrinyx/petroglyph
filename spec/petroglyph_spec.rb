@@ -140,41 +140,49 @@ describe Petroglyph do
     template.data.should eq({:hal => {:name => 'HAL 9000', :temperament => 'psychotic'}})
   end
 
-  xit "operates on enumerables" do
+  it "operates on enumerables" do
     tea = OpenStruct.new(:type => 'tea', :temperature => 'hot')
+    coffee = OpenStruct.new(:type => 'coffee', :temperature => 'lukewarm')
 
-    t = Petroglyph::Template.build(:drinks => [tea]) do
+    t = Petroglyph::Template.build(:drinks => [tea, coffee]) do
       collection :drinks => drinks do
         attributes :type, :temperature
       end
     end
 
-    t.render.should eq({:drinks => [{:type => 'tea', :temperature => 'hot'}]}.to_json)
+    t.data.should eq({:drinks => [{:type => 'tea', :temperature => 'hot'}, {:type => 'coffee', :temperature => 'lukewarm'}]})
   end
 
-  xit "operates intelligently on enumerables" do
+  it "operates on enumerables with explicitly named items" do
     tea = OpenStruct.new(:type => 'tea', :temperature => 'hot')
+    coffee = OpenStruct.new(:type => 'coffee', :temperature => 'lukewarm')
 
-    t = Petroglyph::Template.build(:drinks => [tea]) do
-      collection :drinks => drinks do
+    t = Petroglyph::Template.build(:drinks => [tea, coffee]) do
+      collection :drinks => drinks do |drink|
         node :drink do
-          attributes :type, :temperature
+          node :type, drink.type
         end
-        node :preparation do
-          "Boil water, then wait."
-        end
+        node :prep, "Make water #{drink.temperature}."
       end
     end
 
-    t.render.should eq({:drinks => [{:drink => {:type => 'tea', :temperature => 'hot'}, :preparation => 'Boil water, then wait.'}]}.to_json)
+    t.data.should eq({:drinks => [{:drink => {:type => 'tea'}, :prep => "Make water hot."}, {:drink => {:type => 'coffee'}, :prep => "Make water lukewarm."}]})
   end
 
-  xit "can use self to add a node with a simple value" do
-    t = Petroglyph::Template.build do
-      self[:drink] = "tea"
+  it "can operate on object attributes within a node" do
+    tea = OpenStruct.new(:type => 'tea', :temperature => 'hot')
+    coffee = OpenStruct.new(:type => 'coffee', :temperature => 'lukewarm')
+
+    t = Petroglyph::Template.build(:drinks => [tea, coffee]) do
+      collection :drinks => drinks do |drink|
+        node :drink => drink do
+          attributes :type
+        end
+        node :prep, "Make water #{drink.temperature}."
+      end
     end
 
-    t.render.should eq({:drink => "tea"}.to_json)
+    t.data.should eq({:drinks => [{:drink => {:type => 'tea'}, :prep => "Make water hot."}, {:drink => {:type => 'coffee'}, :prep => "Make water lukewarm."}]})
   end
 
 end
