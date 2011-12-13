@@ -52,7 +52,7 @@ Iterate through collections:
     wulong = Tea.new(:type => 'wulong')
     lucha = Tea.new(:type => 'green')
 
-    collection :teas => [wulong, green] do
+    collection :teas => [wulong, lucha] do
       attributes :type
     end
     => '{"teas":[{"type":"wulong"},{"type":"wulong"}]}'
