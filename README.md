@@ -9,11 +9,6 @@ Add a node with a simple value:
     node :beverage, current_user.favorite_drink
     => '{"beverage":"mead"}'
 
-This can also be done with the normal hash syntax:
-
-    self[:beverage] = current_user.favorite_drink
-    => '{"beverage":"mead"}'
-
 Add a node with nested content:
 
     node :home do
@@ -25,7 +20,7 @@ Add sibling nodes within a node:
 
     node :pet do
       merge {:species => "turtle", :color => 'green'}
-      self[:name] = "Anthony"
+      node :name, "Anthony"
     end
     => '{"pet":{"species":"turtle","color":"green","name":"Anthony"}}'
 
@@ -33,8 +28,8 @@ It's all just ruby, unsurprisingly:
 
     node :pet do
       if user.child?
-        merge {:species => "turtle", :color => 'green'}
-        self[:name] = "Anthony"
+        merge {:species => "turtle"}
+        node :name, "Anthony"
       else
         node :species, 'human'
         node :name, 'Billy'
@@ -42,14 +37,15 @@ It's all just ruby, unsurprisingly:
     end
     => '{"pet":{"species":"turtle","name":"Anthony"}}'
 
-Conveniently define which attributes to include
+Conveniently define which attributes to include. Create a new node with a different name for attributes you wish to alias.
 
     alice = Person.create!(:name => 'Alice', :profession => 'surgeon', :created_at => 28.years.ago, :gender => 'female')
 
-    node :person => alice do |name|
-      attributes :name, :profession, :gender
+    node :person => alice do
+      attributes :name, :gender
+      node :job, alice.profession
     end
-    => '{"person":{"name":"Alice","profession":"surgeon","gender":"female"}}'
+    => '{"person":{"name":"Alice","gender":"female","job":"surgeon"}}'
 
 Iterate through collections:
 
@@ -65,9 +61,8 @@ Iterate through collections:
 You can also explicitly reference each item in the collection if you need to:
 
     collection :teas => teas do |tea|
-      node :tea do
+      node :tea => tea do
         attributes :type
-
       end
       node :provider, lookup_provider_for(tea)
     end
