@@ -8,24 +8,24 @@ module Petroglyph
       @value = {}
     end
 
-    def merge(hash)
-      @value.merge!(hash)
-    end
-
     def node(name, value = nil, &block)
       node = Node.new
       node.name = name
+
       if block_given?
-        result = yield
-        if result.is_a? String
-          node.value = result
-        else
-          node.merge result
-        end
+        node.value = yield
       else
         node.value = value
       end
       merge node.to_hash
+    end
+
+    def merge(hash)
+      @value = @value.merge(hash)
+    end
+
+    def to_hash
+      {name => value}
     end
 
     def attributes(*args)
@@ -38,10 +38,6 @@ module Petroglyph
         end
       end
       merge fragment
-    end
-
-    def to_hash
-      {name => value}
     end
 
     def method_missing(method, *args, &block)

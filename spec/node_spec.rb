@@ -96,7 +96,7 @@ describe Petroglyph::Node do
       test.data.should eq({:whatever => 'awesome'})
     end
 
-    it "can handle helper methods" do
+    it "handles helper methods" do
       def stuff
         "awesome"
       end
@@ -128,6 +128,20 @@ describe Petroglyph::Node do
       end
 
       test.data.should eq({:whatever => {:stuff => 'awesome'}})
+    end
+
+    xit "sanity check (can probably just delete it): handles nested siblings" do
+      test = TestContext.test do
+        node :whatever do
+          node(:stuff) { "awesome" }
+          node :yeah, "yeah"
+          node :no do
+            "way"
+          end
+        end
+      end
+
+      test.data.should eq({:whatever => {:stuff => 'awesome', :yeah => "yeah", :no => "way"}})
     end
   end
 
