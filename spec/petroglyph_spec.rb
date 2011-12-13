@@ -11,6 +11,14 @@ describe Petroglyph do
     t.render.should eq({:drink => "tea"}.to_json)
   end
 
+  it "adds a node with a string in a block" do
+    t = Petroglyph::Template.build do
+      node(:drink) { "tea" }
+    end
+
+    t.render.should eq({:drink => "tea"}.to_json)
+  end
+
   it "nests stuff arbitrarily deeply" do
     t = Petroglyph::Template.build do
       node :drink do
@@ -23,6 +31,20 @@ describe Petroglyph do
     end
 
     t.render.should eq({:drink => {:tea => {:temperature => "hot"}}}.to_json)
+  end
+
+  it "nests stuff arbitrarily deeply with complex values" do
+    t = Petroglyph::Template.build do
+      node :drink do
+        node :tea do
+          node :temperature do
+            {:really => :hot}
+          end
+        end
+      end
+    end
+
+    t.render.should eq({:drink => {:tea => {:temperature => {:really => :hot}}}}.to_json)
   end
 
   it "uses regular ruby" do
@@ -89,6 +111,15 @@ describe Petroglyph do
   end
 
   it "makes sibling nodes" do
+    t = Petroglyph::Template.build do
+      node :drink, "tea"
+      node :type, "wulong"
+    end
+
+    t.render.should eq({:drink => "tea", :type => "wulong"}.to_json)
+  end
+
+  it "makes sibling nodes using blocks" do
     t = Petroglyph::Template.build do
       node :drink do
         "tea"
