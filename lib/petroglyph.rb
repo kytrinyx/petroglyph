@@ -1,4 +1,4 @@
 require 'json'
 
-require 'petroglyph/node'
+require 'petroglyph/scope'
 require 'petroglyph/template'

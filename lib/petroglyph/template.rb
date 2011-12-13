@@ -7,7 +7,7 @@ module Petroglyph
     def self.build(locals = {}, &block)
       parent_context = eval "self", block.binding
       t = self.new
-      page = Node.new(parent_context, locals)
+      page = Scope.new(parent_context, locals)
       page.instance_eval(&block)
       t.data = page.value
       t

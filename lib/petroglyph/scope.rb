@@ -1,5 +1,5 @@
 module Petroglyph
-  class Node
+  class Scope
     attr_accessor :value, :object
 
     def initialize(template_context = nil, locals = {}, parent_node = nil)
@@ -10,7 +10,7 @@ module Petroglyph
     end
 
     def sub_node(object = nil)
-      node = Node.new(@template_context, @locals, self)
+      node = Scope.new(@template_context, @locals, self)
       node.object = object
       node
     end

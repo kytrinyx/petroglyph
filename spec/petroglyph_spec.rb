@@ -71,13 +71,13 @@ describe Petroglyph do
       node :drink do
         node :tea do
           node :temperature do
-            {:really => :hot}
+            merge(:really => :hot)
           end
         end
       end
     end
 
-    t.render.should eq({:drink => {:tea => {:temperature => {:really => :hot}}}}.to_json)
+    t.data.should eq({:drink => {:tea => {:temperature => {:really => :hot}}}})
   end
 
   it "uses regular ruby" do
