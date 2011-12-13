@@ -1,8 +1,8 @@
 # Petroglyph
 
-A simple ruby dsl to create json views.
+A simple, terse, and unsurprising ruby dsl to create json views.
 
-## Examples
+## Usage
 
 Add a node with a simple value:
 
@@ -68,3 +68,16 @@ You can also explicitly reference each item in the collection if you need to:
     end
     => '{"teas":[{"tea":{"type":"wulong"},{"provider":"Imperial Teas"}},{"tea":{"type":"wulong"},{"provider":"House of Tea"}}]}'
 
+
+## Related Projects
+
+Other json templating libraries exist, some of which also generate XML.
+
+* [Rabl](https://github.com/nesquena/rabl)
+* [Tequila](https://github.com/inem/tequila)
+* [Argonaut](https://github.com/jbr/argonaut)
+* [JSON Builder](https://github.com/dewski/json_builder)
+* [JBuilder](https://github.com/rails/jbuilder)
+* [Jsonify](https://github.com/bsiggelkow/jsonify)
+* [Representative](https://github.com/mdub/representative)
+* [Tokamak](https://github.com/abril/tokamak)
