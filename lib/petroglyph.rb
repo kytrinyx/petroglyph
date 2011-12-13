@@ -20,6 +20,8 @@ module Petroglyph
       else
         @root = @root.merge(name => value)
       end
+
+      @root
     end
 
     def merge(hash)
@@ -40,7 +42,7 @@ module Petroglyph
       results = []
       values.each do |value|
         @object = value
-        results << block.call
+        results << block.call(value)
       end
       node(name, results)
     end

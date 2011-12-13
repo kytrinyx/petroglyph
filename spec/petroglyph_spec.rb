@@ -156,6 +156,19 @@ describe Petroglyph do
     t.render.should eq({:drinks => [{:type => 'tea', :temperature => 'hot'}]}.to_json)
   end
 
+  xit "operates on enumerables with named variables" do
+    tea = OpenStruct.new(:type => 'tea', :temperature => 'hot')
+
+    t = Petroglyph::Template.build(:drinks => [tea]) do
+      collection :drinks => drinks do |drink|
+        node(:drink) { drink.type }
+        node(:preparation) { "Boil water until it is #{drink.temperature}." }
+      end
+    end
+
+    t.render.should eq({:drinks => [{:drink => "tea", :preparation => 'Boil water. Wait for tea.'}]}.to_json)
+  end
+
   xit "operates intelligently on enumerables" do
     tea = OpenStruct.new(:type => 'tea', :temperature => 'hot')
 
