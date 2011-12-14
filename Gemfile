@@ -1,5 +1,4 @@
-source 'http://rubygems.org'
+source "http://rubygems.org"
 
-gem 'yajl-ruby', :require => "yajl"
-gem 'rspec'
-
+# Specify your gem's dependencies in petroglyph.gemspec
+gemspec

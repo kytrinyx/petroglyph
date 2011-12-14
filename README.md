@@ -68,6 +68,9 @@ You can also explicitly reference each item in the collection if you need to:
     end
     => '{"teas":[{"tea":{"type":"wulong"},{"provider":"Imperial Teas"}},{"tea":{"type":"wulong"},{"provider":"House of Tea"}}]}'
 
+## Caveat
+
+It doesn't evaluate in object scope. That is to say: You don't get instance variables.
 
 ## Related Projects
 

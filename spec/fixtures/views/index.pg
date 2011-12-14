@@ -1,0 +1,3 @@
+collection :drinks => drinks do |drink|
+  attributes :type, :temperature
+end
