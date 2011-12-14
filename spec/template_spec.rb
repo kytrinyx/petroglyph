@@ -16,6 +16,14 @@ describe Petroglyph::Template do
 
     template.data.should eq(:whatever => "nevermind")
   end
+  
+  it "accepts an immediate value for a node as a hash" do
+    template = Petroglyph::Template.build do
+      node :whatever => "nevermind"
+    end
+
+    template.data.should eq(:whatever => "nevermind")
+  end
 
   it "merges in a hash" do
     t = Petroglyph::Template.build do
