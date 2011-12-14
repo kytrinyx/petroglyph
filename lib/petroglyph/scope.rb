@@ -2,32 +2,32 @@ module Petroglyph
   class Scope
     attr_accessor :value, :object
 
-    def initialize(template_context = nil, locals = {}, parent_node = nil)
+    def initialize(template_context = nil, locals = {}, parent_scope = nil)
       @template_context = template_context
       @locals = locals
-      @parent_node = parent_node
+      @parent_scope = parent_scope
       @value = nil
     end
 
-    def sub_node(object = nil)
-      node = Scope.new(@template_context, @locals, self)
-      node.object = object
-      node
+    def sub_scope(object = nil)
+      scope = Scope.new(@template_context, @locals, self)
+      scope.object = object
+      scope
     end
 
     def node(name, value = nil, &block)
       @value ||= {}
-      node = nil
+      scope = nil
       if name.is_a?(Hash)
-        node = sub_node(name.values.first)
+        scope = sub_scope(name.values.first)
         name = name.keys.first
       else
-        node = sub_node
+        scope = sub_scope
       end
 
       if block_given?
-        node.instance_eval(&block)
-        @value[name] = node.value if node.value
+        scope.instance_eval(&block)
+        @value[name] = scope.value if scope.value
       else
         @value[name] = value
       end
@@ -39,9 +39,9 @@ module Petroglyph
       items = input.values.first
       results = []
       items.each do |item|
-        node = sub_node(item)
-        node.instance_exec(item, &block)
-        results << node.value
+        scope = sub_scope(item)
+        scope.instance_exec(item, &block)
+        results << scope.value
       end
       @value[name] = results
     end
