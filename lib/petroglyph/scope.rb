@@ -49,8 +49,13 @@ module Petroglyph
       @value[name] = results
     end
 
-    def merge(hash)
+    def merge(hash, &block)
       @value ||= {}
+      if block_given?
+        node = sub_node(hash)
+        node.instance_eval(&block)
+        hash = node.value
+      end
       @value.merge!(hash)
     end
 
