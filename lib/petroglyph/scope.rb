@@ -19,7 +19,10 @@ module Petroglyph
       @value ||= {}
       node = nil
       if name.is_a?(Hash)
+        raise ArgumentError, "node takes either a hash or an immediate value, never both" if value
+        raise ArgumentError, "node can't deal with more than one key at a time" if name.keys.size > 1
         node = sub_node(name.values.first)
+        value = name.values.first
         name = name.keys.first
       else
         node = sub_node
@@ -46,8 +49,13 @@ module Petroglyph
       @value[name] = results
     end
 
-    def merge(hash)
+    def merge(hash, &block)
       @value ||= {}
+      if block_given?
+        node = sub_node(hash)
+        node.instance_eval(&block)
+        hash = node.value
+      end
       @value.merge!(hash)
     end
 

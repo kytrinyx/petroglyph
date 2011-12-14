@@ -16,6 +16,14 @@ describe Petroglyph::Template do
 
     template.data.should eq(:whatever => "nevermind")
   end
+  
+  it "accepts an immediate value for a node as a hash" do
+    template = Petroglyph::Template.build do
+      node :whatever => "nevermind"
+    end
+
+    template.data.should eq(:whatever => "nevermind")
+  end
 
   it "merges in a hash" do
     t = Petroglyph::Template.build do
@@ -34,6 +42,18 @@ describe Petroglyph::Template do
     end
 
     template.data.should eq({:whatever => {:stuff => {:no => :way}}})
+  end
+
+  it "lets you process what you merge in a block" do
+    template = Petroglyph::Template.build do
+      node :whatever do
+        merge(10) do
+          attributes :to_s
+        end
+      end
+    end
+
+    template.data.should eq({:whatever => {:to_s => '10'}})
   end
 
   it "handles sibling nodes" do
