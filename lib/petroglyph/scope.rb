@@ -15,17 +15,20 @@ module Petroglyph
       scope
     end
 
-    def node(name, value = nil, &block)
+    def node(input, &block)
       @value ||= {}
       scope = nil
-      if name.is_a?(Hash)
-        scope = sub_scope(name.values.first)
-        name = name.keys.first
+      name = nil
+      value = nil
+      if input.is_a?(Hash)
+        name = input.keys.first
+        value = input.values.first
       else
-        scope = sub_scope
+        name = input
       end
 
       if block_given?
+        scope = sub_scope(value)
         scope.instance_eval(&block)
         @value[name] = scope.value if scope.value
       else

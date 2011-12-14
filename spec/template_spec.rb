@@ -11,7 +11,7 @@ describe Petroglyph::Template do
 
   it "takes a simple string value" do
     template = Petroglyph::Template.build do
-      node :whatever, "nevermind"
+      node :whatever => "nevermind"
     end
 
     template.data.should eq(:whatever => "nevermind")
@@ -38,8 +38,8 @@ describe Petroglyph::Template do
 
   it "handles sibling nodes" do
     template = Petroglyph::Template.build do
-      node :whatever, "nevermind"
-      node :stuff, "awesome"
+      node :whatever => "nevermind"
+      node :stuff => "awesome"
     end
 
     template.data.should eq({:whatever => "nevermind", :stuff => "awesome"})
@@ -47,7 +47,7 @@ describe Petroglyph::Template do
 
   it "handles sibling nodes as blocks" do
     template = Petroglyph::Template.build do
-      node :whatever, "nevermind"
+      node :whatever => "nevermind"
       node :stuff do
         merge(:too => :cool)
       end
@@ -59,7 +59,7 @@ describe Petroglyph::Template do
   it "nests nodes" do
     template = Petroglyph::Template.build do
       node :whatever do
-        node :stuff, "awesome"
+        node :stuff => "awesome"
       end
     end
 
@@ -100,7 +100,7 @@ describe Petroglyph::Template do
 
   it "takes local variables" do
     template = Petroglyph::Template.build(:stuff => 'awesome') do
-      node :whatever, stuff
+      node :whatever => stuff
     end
 
     template.data.should eq({:whatever => 'awesome'})
@@ -112,7 +112,7 @@ describe Petroglyph::Template do
     end
 
     template = Petroglyph::Template.build do
-      node :whatever, stuff
+      node :whatever => stuff
     end
 
     template.data.should eq({:whatever => 'awesome'})
@@ -124,7 +124,7 @@ describe Petroglyph::Template do
     end
 
     template = Petroglyph::Template.build(:stuff => 'awesome') do
-      node :whatever, stuff
+      node :whatever => stuff
     end
 
     template.data.should eq({:whatever => 'awesome'})
@@ -174,9 +174,9 @@ describe Petroglyph::Template do
     t = Petroglyph::Template.build(:drinks => [tea, coffee]) do
       collection :drinks => drinks do |drink|
         node :drink do
-          node :type, drink.type
+          node :type => drink.type
         end
-        node :prep, "Make water #{drink.temperature}."
+        node :prep => "Make water #{drink.temperature}."
       end
     end
 
@@ -192,7 +192,7 @@ describe Petroglyph::Template do
         node :drink => drink do
           attributes :type
         end
-        node :prep, "Make water #{drink.temperature}."
+        node :prep => "Make water #{drink.temperature}."
       end
     end
 

@@ -6,7 +6,7 @@ A simple, terse, and unsurprising ruby dsl to create json views.
 
 Add a node with a simple value:
 
-    node :beverage, current_user.favorite_drink
+    node :beverage => current_user.favorite_drink
     => '{"beverage":"mead"}'
 
 Add a node with nested content:
@@ -20,7 +20,7 @@ Add sibling nodes within a node:
 
     node :pet do
       merge {:species => "turtle", :color => 'green'}
-      node :name, "Anthony"
+      node :name => "Anthony"
     end
     => '{"pet":{"species":"turtle","color":"green","name":"Anthony"}}'
 
@@ -29,10 +29,10 @@ It's all just ruby, unsurprisingly:
     node :pet do
       if user.child?
         merge {:species => "turtle"}
-        node :name, "Anthony"
+        node :name => "Anthony"
       else
-        node :species, 'human'
-        node :name, 'Billy'
+        node :species => 'human'
+        node :name => 'Billy'
       end
     end
     => '{"pet":{"species":"turtle","name":"Anthony"}}'
@@ -43,7 +43,7 @@ Conveniently define which attributes to include. Create a new node with a differ
 
     node :person => alice do
       attributes :name, :gender
-      node :job, alice.profession
+      node :job => alice.profession
     end
     => '{"person":{"name":"Alice","gender":"female","job":"surgeon"}}'
 
@@ -64,7 +64,7 @@ You can also explicitly reference each item in the collection if you need to:
       node :tea => tea do
         attributes :type
       end
-      node :provider, lookup_provider_for(tea)
+      node :provider => lookup_provider_for(tea)
     end
     => '{"teas":[{"tea":{"type":"wulong"},{"provider":"Imperial Teas"}},{"tea":{"type":"wulong"},{"provider":"House of Tea"}}]}'
 
