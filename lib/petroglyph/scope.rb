@@ -21,6 +21,7 @@ module Petroglyph
       name = nil
       value = nil
       if input.is_a?(Hash)
+        raise ArgumentError, "node can't deal with more than one key at a time" if input.keys.size > 1
         name = input.keys.first
         value = input.values.first
       else
@@ -49,8 +50,13 @@ module Petroglyph
       @value[name] = results
     end
 
-    def merge(hash)
+    def merge(hash, &block)
       @value ||= {}
+      if block_given?
+        scope = sub_scope(hash)
+        scope.instance_eval(&block)
+        hash = scope.value
+      end
       @value.merge!(hash)
     end
 
