@@ -19,11 +19,7 @@ module Tilt
     end
 
     def evaluate(scope, locals, &block)
-      Petroglyph.compile(data, locals) # what about the block?
-      # input = eval data
-      # template = Petroglyph::Template.build(locals, input)
-      # template.render
-      #Mustache.render(Fu.to_mustache(data), locals.merge(scope.is_a?(Hash) ? scope : {}).merge({:yield => block.nil? ? '' : block.call}))
+      Petroglyph.compile(data, locals)
     end
   end
   register PetroglyphTemplate, 'pg'
