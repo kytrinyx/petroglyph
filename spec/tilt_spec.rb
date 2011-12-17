@@ -13,12 +13,12 @@ describe "Tilt integration" do
   end
 
   it "renders from a block" do
-    template = Tilt::PetroglyphTemplate.new { |t| 'node :hello, "world"' }
+    template = Tilt::PetroglyphTemplate.new { |t| 'node :hello => "world"' }
     template.render.should eq("{\"hello\":\"world\"}")
   end
 
   it "can be rendered more than once" do
-    template = Tilt::PetroglyphTemplate.new { |t| 'node :hello, "world"' }
+    template = Tilt::PetroglyphTemplate.new { |t| 'node :hello => "world"' }
 
     3.times do
       template.render.should eq("{\"hello\":\"world\"}")
@@ -26,7 +26,7 @@ describe "Tilt integration" do
   end
 
   it "takes local variables" do
-    template = Tilt::PetroglyphTemplate.new { |t| 'node :hello, place' }
+    template = Tilt::PetroglyphTemplate.new { |t| 'node :hello => place' }
     template.render(Object.new, :place => 'world').should eq("{\"hello\":\"world\"}")
   end
 end
