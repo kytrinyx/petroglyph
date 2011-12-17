@@ -219,4 +219,14 @@ describe Petroglyph::Template do
     t.data.should eq({:drinks => [{:drink => {:type => 'tea'}, :prep => "Make water hot."}, {:drink => {:type => 'coffee'}, :prep => "Make water lukewarm."}]})
   end
 
+  it "an empty collection is rendered as an empty array" do
+    t = Petroglyph::Template.build(:drinks => []) do
+      collection :drinks => drinks do |drink|
+        node :drink => drink
+      end
+    end
+
+    t.data.should eq({:drinks => []})
+  end
+
 end
