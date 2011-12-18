@@ -1,3 +1,5 @@
+require 'tilt/petroglyph'
+
 if defined?(Sinatra)
   module Sinatra::Templates
     def pg(template, options={}, locals={})
