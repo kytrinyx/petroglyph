@@ -1,10 +1,10 @@
 module Petroglyph
 
-  class Template
+  class Engine
 
     attr_accessor :data
 
-    def self.build(locals = {}, &block)
+    def self.start(locals = {}, &block)
       parent_context = eval "self", block.binding
       t = self.new
       page = Scope.new(parent_context, locals)

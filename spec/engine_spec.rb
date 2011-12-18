@@ -1,16 +1,16 @@
 require 'ostruct'
 require 'petroglyph'
 
-describe Petroglyph::Template do
+describe Petroglyph::Engine do
 
   it "renders to json" do
-    template = Petroglyph::Template.new
+    template = Petroglyph::Engine.new
     template.data = {:something => :borrowed}
     template.render.should eq('{"something":"borrowed"}')
   end
 
   it "takes a simple string value" do
-    template = Petroglyph::Template.build do
+    template = Petroglyph::Engine.start do
       node :whatever => "nevermind"
     end
 
@@ -18,7 +18,7 @@ describe Petroglyph::Template do
   end
 
   it "accepts an immediate value for a node as a hash" do
-    template = Petroglyph::Template.build do
+    template = Petroglyph::Engine.start do
       node :whatever => "nevermind"
     end
 
@@ -26,7 +26,7 @@ describe Petroglyph::Template do
   end
 
   it "merges in a hash" do
-    t = Petroglyph::Template.build do
+    t = Petroglyph::Engine.start do
       tea = {:tea => {:temperature => 'hot', :type => 'wulong'}}
       merge tea
     end
@@ -35,7 +35,7 @@ describe Petroglyph::Template do
   end
 
   it "merges within a block" do
-    template = Petroglyph::Template.build do
+    template = Petroglyph::Engine.start do
       node :whatever do
         merge(:stuff => {:no => :way})
       end
@@ -45,7 +45,7 @@ describe Petroglyph::Template do
   end
 
   it "lets you process what you merge in a block" do
-    template = Petroglyph::Template.build do
+    template = Petroglyph::Engine.start do
       node :whatever do
         merge(10) do
           attributes :to_s
@@ -57,7 +57,7 @@ describe Petroglyph::Template do
   end
 
   it "handles sibling nodes" do
-    template = Petroglyph::Template.build do
+    template = Petroglyph::Engine.start do
       node :whatever => "nevermind"
       node :stuff => "awesome"
     end
@@ -66,7 +66,7 @@ describe Petroglyph::Template do
   end
 
   it "handles sibling nodes as blocks" do
-    template = Petroglyph::Template.build do
+    template = Petroglyph::Engine.start do
       node :whatever => "nevermind"
       node :stuff do
         merge(:too => :cool)
@@ -77,7 +77,7 @@ describe Petroglyph::Template do
   end
 
   it "nests nodes" do
-    template = Petroglyph::Template.build do
+    template = Petroglyph::Engine.start do
       node :whatever do
         node :stuff => "awesome"
       end
@@ -87,7 +87,7 @@ describe Petroglyph::Template do
   end
 
   it "nests stuff arbitrarily deeply with complex values" do
-    t = Petroglyph::Template.build do
+    t = Petroglyph::Engine.start do
       node :drink do
         node :tea do
           node :temperature do
@@ -101,7 +101,7 @@ describe Petroglyph::Template do
   end
 
   it "uses regular ruby" do
-    t = Petroglyph::Template.build do
+    t = Petroglyph::Engine.start do
 
       node :drink do
         if false
@@ -119,7 +119,7 @@ describe Petroglyph::Template do
   end
 
   it "takes local variables" do
-    template = Petroglyph::Template.build(:stuff => 'awesome') do
+    template = Petroglyph::Engine.start(:stuff => 'awesome') do
       node :whatever => stuff
     end
 
@@ -131,7 +131,7 @@ describe Petroglyph::Template do
       "awesome"
     end
 
-    template = Petroglyph::Template.build do
+    template = Petroglyph::Engine.start do
       node :whatever => stuff
     end
 
@@ -143,7 +143,7 @@ describe Petroglyph::Template do
       "okay"
     end
 
-    template = Petroglyph::Template.build(:stuff => 'awesome') do
+    template = Petroglyph::Engine.start(:stuff => 'awesome') do
       node :whatever => stuff
     end
 
@@ -153,7 +153,7 @@ describe Petroglyph::Template do
   it "evaluates objects" do
     hal = OpenStruct.new(:name => 'HAL 9000', :temperament => 'psychotic', :garbage => 'junk')
 
-    template = Petroglyph::Template.build do
+    template = Petroglyph::Engine.start do
       node :hal => hal do
         attributes :name, :temperament
       end
@@ -165,7 +165,7 @@ describe Petroglyph::Template do
   it "evaluates hashes" do
     hal = {:name => 'HAL 9000', :temperament => 'psychotic', :garbage => 'junk'}
 
-    template = Petroglyph::Template.build do
+    template = Petroglyph::Engine.start do
       node :hal => hal do
         attributes :name, :temperament
       end
@@ -178,7 +178,7 @@ describe Petroglyph::Template do
     tea = OpenStruct.new(:type => 'tea', :temperature => 'hot')
     coffee = OpenStruct.new(:type => 'coffee', :temperature => 'lukewarm')
 
-    t = Petroglyph::Template.build(:drinks => [tea, coffee]) do
+    t = Petroglyph::Engine.start(:drinks => [tea, coffee]) do
       collection :drinks => drinks do
         attributes :type, :temperature
       end
@@ -191,7 +191,7 @@ describe Petroglyph::Template do
     tea = OpenStruct.new(:type => 'tea', :temperature => 'hot')
     coffee = OpenStruct.new(:type => 'coffee', :temperature => 'lukewarm')
 
-    t = Petroglyph::Template.build(:drinks => [tea, coffee]) do
+    t = Petroglyph::Engine.start(:drinks => [tea, coffee]) do
       collection :drinks => drinks do |drink|
         node :drink do
           node :type => drink.type
@@ -207,7 +207,7 @@ describe Petroglyph::Template do
     tea = OpenStruct.new(:type => 'tea', :temperature => 'hot')
     coffee = OpenStruct.new(:type => 'coffee', :temperature => 'lukewarm')
 
-    t = Petroglyph::Template.build(:drinks => [tea, coffee]) do
+    t = Petroglyph::Engine.start(:drinks => [tea, coffee]) do
       collection :drinks => drinks do |drink|
         node :drink => drink do
           attributes :type
@@ -220,7 +220,7 @@ describe Petroglyph::Template do
   end
 
   it "an empty collection is rendered as an empty array" do
-    t = Petroglyph::Template.build(:drinks => []) do
+    t = Petroglyph::Engine.start(:drinks => []) do
       collection :drinks => drinks do |drink|
         node :drink => drink
       end

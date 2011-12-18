@@ -1,6 +1,6 @@
 require 'ostruct'
 require 'petroglyph'
-require 'petroglyph/tilt'
+require 'tilt/petroglyph'
 
 describe "Tilt integration" do
   it "registers .pg as a petroglyph template" do

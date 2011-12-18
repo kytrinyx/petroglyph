@@ -1,8 +1,9 @@
 # Makes Petroglyph available through Tilt.
-# A lso contains a utility function that will
+# Also contains a utility function that will
 # be added to Sinatra if Sinatra is defined.
 
 require 'tilt'
+require 'petroglyph'
 
 module Tilt
   class PetroglyphTemplate < Template
@@ -23,12 +24,4 @@ module Tilt
     end
   end
   register PetroglyphTemplate, 'pg'
-end
-
-if defined?(Sinatra)
-  module Sinatra::Templates
-    def pg(template, options={}, locals={})
-      render :pg, template, options, locals
-    end
-  end
 end

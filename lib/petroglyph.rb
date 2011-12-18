@@ -1,14 +1,14 @@
 require 'json'
 
 require 'petroglyph/scope'
-require 'petroglyph/template'
+require 'petroglyph/engine'
 
 module Petroglyph
   def self.compile(data = "", locals = {}, &block)
     if block_given?
-      Petroglyph::Template.build(locals, &block).render
+      Petroglyph::Engine.start(locals, &block).render
     else
-      Petroglyph::Template.build(locals) { eval data }.render
+      Petroglyph::Engine.start(locals) { eval data }.render
     end
   end
 end

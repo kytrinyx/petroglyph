@@ -1,10 +1,13 @@
 require 'ostruct'
 require 'sinatra'
-require 'petroglyph/tilt'
+require 'tilt/petroglyph'
+require 'sinatra/petroglyph'
 require 'rack/test'
 
 class PetroglyphApp < Sinatra::Base
   set :root, File.dirname(__FILE__)+"/fixtures"
+  set :show_exceptions, false
+
   get "/" do
     tea = OpenStruct.new(:type => 'tea', :temperature => 'hot')
     coffee = OpenStruct.new(:type => 'coffee', :temperature => 'lukewarm')
