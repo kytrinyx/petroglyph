@@ -28,4 +28,17 @@ describe "Tilt integration" do
     template = Tilt::PetroglyphTemplate.new { |t| 'node :hello => place' }
     template.render(Object.new, :place => 'world').should eq("{\"hello\":\"world\"}")
   end
+
+  context "with partials" do
+    it "loads the partial" do
+      template = Tilt::PetroglyphTemplate.new('spec/fixtures/views/with_partial.pg')
+      template.render.should eq('{"root":{"thing":"stuff"}}')
+    end
+
+    it "loads the partial from a subdirectory" do
+      template = Tilt::PetroglyphTemplate.new('spec/fixtures/views/with_sub_partial.pg')
+      template.render.should eq('{"root":{"thing":"stuff"}}')
+    end
+
+  end
 end

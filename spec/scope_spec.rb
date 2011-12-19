@@ -1,5 +1,5 @@
 require 'ostruct'
-require 'petroglyph/scope'
+require 'petroglyph'
 
 describe Petroglyph::Scope do
 
@@ -215,4 +215,48 @@ describe Petroglyph::Scope do
     end
   end
 
+  context "with partials" do
+    it "renders a partial" do
+      Petroglyph.stub(:partial) { 'node :drink => "tea"' }
+
+      scope = Petroglyph::Scope.new
+      scope.node :partial do
+        partial :the_partial
+      end
+
+      scope.value.should eq({:partial => {:drink => 'tea'}})
+    end
+
+    it "renders a partial with local variables" do
+      Petroglyph.stub(:partial) { 'node :drink => drink' }
+
+      scope = Petroglyph::Scope.new
+      scope.node :partial do
+        partial :the_partial, :drink => 'tea'
+      end
+
+      scope.value.should eq({:partial => {:drink => 'tea'}})
+    end
+
+    it "finds the partial" do
+      scope = Petroglyph::Scope.new
+      scope.file = "spec/fixtures/views/some_template.pg"
+      scope.node :partial do
+        partial :the_partial, :thing => 'stuff'
+      end
+
+      scope.value.should eq({:partial => {:thing => 'stuff'}})
+    end
+
+    it "finds the partial in a subdirectory" do
+      scope = Petroglyph::Scope.new
+      scope.file = "spec/fixtures/views/some_template.pg"
+      scope.node :partial do
+        partial :sub_partial, :thing => 'stuff'
+      end
+
+      scope.value.should eq({:partial => {:thing => 'stuff'}})
+    end
+
+  end
 end

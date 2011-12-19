@@ -1,0 +1,3 @@
+node :root do
+  partial :the_partial, :thing => 'stuff'
+end

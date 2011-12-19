@@ -25,4 +25,5 @@ describe Petroglyph::Engine do
     engine = Petroglyph::Engine.new('node :whatever => thing')
     engine.render(nil, {:thing => 'stuff'}).should eq({:whatever => 'stuff'}.to_json)
   end
+
 end

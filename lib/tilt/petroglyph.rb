@@ -20,7 +20,7 @@ module Tilt
     end
 
     def evaluate(scope = Object.new, locals = {}, &block)
-      Petroglyph::Engine.new(data).render(scope, locals, &block)
+      Petroglyph::Engine.new(data).render(scope, locals, file, &block)
     end
   end
   register PetroglyphTemplate, 'pg'

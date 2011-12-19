@@ -1,8 +1,9 @@
 module Petroglyph
   class Scope
-    attr_accessor :value, :object
+    attr_accessor :value, :object, :file
 
-    def initialize(context = nil, locals = {}, parent_scope = nil)
+    def initialize(context = nil, locals = {}, template_filename = nil, parent_scope = nil)
+      @file = template_filename
       @context = context
       # this has to be the wrong way of doing this
       @context.instance_variables.each do |var|
@@ -14,7 +15,7 @@ module Petroglyph
     end
 
     def sub_scope(object = nil)
-      scope = Scope.new(@context, @locals, self)
+      scope = Scope.new(@context, @locals, @file, self)
       scope.object = object
       scope
     end
@@ -74,6 +75,13 @@ module Petroglyph
         end
       end
       merge fragment
+    end
+
+    def partial(name, locals = {})
+      data = Petroglyph.partial(name, file)
+      scope = Scope.new(@context, locals)
+      scope.instance_eval(data)
+      merge scope.value
     end
 
     def method_missing(method, *args, &block)
