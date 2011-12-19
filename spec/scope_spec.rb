@@ -1,5 +1,4 @@
-require 'ostruct'
-require 'petroglyph'
+require 'spec_helper'
 
 describe Petroglyph::Scope do
 

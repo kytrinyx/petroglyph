@@ -90,7 +90,7 @@ module Petroglyph
       elsif @context.respond_to?(method)
         @context.send(method)
       else
-        @template_context.send method, *args, &block
+        super
       end
     end
 

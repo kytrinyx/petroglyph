@@ -1,4 +1,4 @@
-require 'ostruct'
+require 'spec_helper'
 require 'tilt/petroglyph'
 
 describe "Tilt integration" do
