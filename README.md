@@ -68,9 +68,15 @@ You can also explicitly reference each item in the collection if you need to:
     end
     => '{"teas":[{"tea":{"type":"wulong"},{"provider":"Imperial Teas"}},{"tea":{"type":"wulong"},{"provider":"House of Tea"}}]}'
 
-## Caveat
+Partials have been implemented. This defaults to looking for a file in the same file as the template, or in a subdirectory called `partials`.
 
-It doesn't evaluate in object scope. That is to say: You don't get instance variables.
+This can be overridden by re-implementing the `Petroglyph.partial(name)` method.
+
+    collection :teas => teas do |tea|
+      # partial(template_name, local_variables)
+      partial :tea, :tea => tea
+    end
+
 
 ## Related Projects
 
