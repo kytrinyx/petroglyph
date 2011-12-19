@@ -19,8 +19,8 @@ module Tilt
       data.to_str
     end
 
-    def evaluate(scope, locals, &block)
-      Petroglyph.compile(data, locals)
+    def evaluate(scope = Object.new, locals = {}, &block)
+      Petroglyph::Engine.new(data).render(scope, locals, &block)
     end
   end
   register PetroglyphTemplate, 'pg'

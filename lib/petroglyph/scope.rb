@@ -2,15 +2,19 @@ module Petroglyph
   class Scope
     attr_accessor :value, :object
 
-    def initialize(template_context = nil, locals = {}, parent_scope = nil)
-      @template_context = template_context
+    def initialize(context = nil, locals = {}, parent_scope = nil)
+      @context = context
+      # this has to be the wrong way of doing this
+      @context.instance_variables.each do |var|
+        self.instance_variable_set(var, @context.instance_variable_get(var))
+      end
       @locals = locals
       @parent_scope = parent_scope
       @value = nil
     end
 
     def sub_scope(object = nil)
-      scope = Scope.new(@template_context, @locals, self)
+      scope = Scope.new(@context, @locals, self)
       scope.object = object
       scope
     end
@@ -75,6 +79,8 @@ module Petroglyph
     def method_missing(method, *args, &block)
       if @locals.has_key?(method)
         @locals[method]
+      elsif @context.respond_to?(method)
+        @context.send(method)
       else
         @template_context.send method, *args, &block
       end

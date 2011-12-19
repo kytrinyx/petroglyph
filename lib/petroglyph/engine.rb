@@ -1,21 +1,19 @@
 module Petroglyph
-
   class Engine
 
-    attr_accessor :data
-
-    def self.start(locals = {}, &block)
-      parent_context = eval "self", block.binding
-      t = self.new
-      page = Scope.new(parent_context, locals)
-      page.instance_eval(&block)
-      t.data = page.value
-      t
+    def initialize(data = nil)
+      @data = data
     end
 
-    def render
-      @data.to_json
+    def render(context = Object.new, locals = {}, &block)
+      data = @data
+      scope = Scope.new(context, locals)
+      if data
+        scope.instance_eval(data)
+      else
+        scope.instance_eval(&block)
+      end
+      scope.value.to_json
     end
-
   end
 end
