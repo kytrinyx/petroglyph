@@ -77,6 +77,9 @@ This can be overridden by re-implementing the `Petroglyph.partial(name)` method.
       partial :tea, :tea => tea
     end
 
+## Caveat
+
+We've removed support for using instance variables (from the controller) in the template, as this was hacky and not optimal.
 
 ## Related Projects
 

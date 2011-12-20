@@ -5,10 +5,6 @@ module Petroglyph
     def initialize(context = nil, locals = {}, template_filename = nil, parent_scope = nil)
       @file = template_filename
       @context = context
-      # this has to be the wrong way of doing this
-      @context.instance_variables.each do |var|
-        self.instance_variable_set(var, @context.instance_variable_get(var))
-      end
       @locals = locals
       @parent_scope = parent_scope
       @value = nil

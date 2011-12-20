@@ -117,17 +117,6 @@ describe Petroglyph::Scope do
       scope.value.should eq({:thing => 'stuff'})
     end
 
-    it "has access to instance variables" do
-      context = Object.new
-      context.instance_eval { @thing = 'stuff' }
-
-      scope = Petroglyph::Scope.new(context)
-      scope.instance_eval do
-        node :thing => @thing
-      end
-      scope.value.should eq({:thing => 'stuff'})
-    end
-
     it "lets local variables take precedence over methods" do
       context = Object.new
       def context.thing
