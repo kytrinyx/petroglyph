@@ -5,6 +5,7 @@ module Petroglyph
     def initialize(context = nil, locals = {}, template_filename = nil, parent_scope = nil)
       @file = template_filename
       @context = context
+      self.copy_instance_variables_from(@context, [:@assigns, :@helpers])
       @locals = locals
       @parent_scope = parent_scope
       @value = nil
