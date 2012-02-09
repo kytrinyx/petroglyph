@@ -5,7 +5,7 @@ module Petroglyph
     def initialize(context = nil, locals = {}, template_filename = nil, parent_scope = nil)
       @file = template_filename
       @context = context
-      self.copy_instance_variables_from(@context, [:@assigns, :@helpers])
+      self.copy_instance_variables_from(@context, [:@assigns, :@helpers]) if self.respond_to?(:copy_instance_variables_from)
       @locals = locals
       @parent_scope = parent_scope
       @value = nil
@@ -82,7 +82,7 @@ module Petroglyph
     end
 
     def method_missing(method, *args, &block)
-      if @locals.has_key?(method)
+      if @locals and @locals.has_key?(method)
         @locals[method]
       elsif @context.respond_to?(method)
         @context.send(method)
