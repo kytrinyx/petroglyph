@@ -7,7 +7,7 @@ if defined?(Tilt)
     end
 
     def prepare
-      options = @options.merge(:format => @options[:format], :source_location => file)
+      options = @options.merge(:source_location => file)
       @engine = ::Petroglyph::Engine.new(data, options)
     end
 
@@ -45,9 +45,6 @@ if defined?(Rails) && Rails.version =~ /^3/
   module ActionView
     module Template::Handlers
       class Petroglyph
-
-        class_attribute :default_format
-        self.default_format = Mime::JSON
 
         def self.call(template)
           source = if template.source.empty?
