@@ -31,7 +31,7 @@ if defined?(Rails) && Rails.version =~ /^2/
 
         def compile(template) %{
           ::Petroglyph::Engine.new(#{template.source.inspect}).
-            render(self, assigns.merge(local_assigns))
+            render(self, assigns.merge(local_assigns), template.filename)
         } end
       end
     end
@@ -54,7 +54,7 @@ if defined?(Rails) && Rails.version =~ /^3/
           end
 
           %{ ::Petroglyph::Engine.new(#{source.inspect}).
-              render(self, assigns.merge(local_assigns)) }
+              render(self, assigns.merge(local_assigns), template.identifier) }
         end # call
       end # petroglyph class
     end # handlers
