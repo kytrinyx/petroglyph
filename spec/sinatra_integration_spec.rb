@@ -30,8 +30,12 @@ describe "Sinatra integration" do
     last_response.body.should eq '{"drinks":[{"type":"tea","temperature":"hot"},{"type":"coffee","temperature":"lukewarm"}]}'
   end
 
-  xit "doesn't freak out on the HTTP method" do
-    post '/'
-    last_response.body.should eq '{}'
+  it "overshadows the controller methods" do
+    # look at /views/fixtures/post.pg
+    # and line 18 of this file
+    pending "right now if you refer to a local var 'post' in the template, you will accidentally call sinatra's post method" do
+      post '/'
+      last_response.body.should eq "{\"post\":\"a post\"}"
+    end
   end
 end
