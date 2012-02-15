@@ -77,9 +77,20 @@ This can be overridden by re-implementing the `Petroglyph.partial(name)` method.
       partial :tea, :tea => tea
     end
 
+## Rails 3
+
+In your controller:
+
+    render 'index', :locals => {:teas => teas}, :layout => false
+
+Support for partials is non-standard at this time: create a subdirectory in the directory that your template lives in and call it `partials`.
+
+
 ## Caveat
 
-We've removed support for using instance variables (from the controller) in the template, as this was hacky and not optimal.
+There is currently no support for instance variables in Sinatra and Rails 3.
+
+Avoid using `post` as a local variable name in sinatra. Since the template context in sinatra is the controller, calling `post` from your template will call the http `post` action. Same goes for `get`, `head`, `put`, etc, but these are less likely to be resources in your application.
 
 ## Related Projects
 
