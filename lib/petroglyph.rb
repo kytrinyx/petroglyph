@@ -16,11 +16,10 @@ module Petroglyph
   end
 end
 
-if defined?(Padrino)
-  require 'padrino-core'
-  Padrino.after_load do
-    require 'petroglyph/template'
-  end
+if defined? Padrino
+  require 'padrino/petroglyph'
+elsif defined? Sinatra
+  require 'sinatra/petroglyph'
 elsif defined?(Rails) && Rails.version =~ /^2/
   require 'petroglyph/template'
 elsif defined?(Rails) && Rails.version =~ /^3/
