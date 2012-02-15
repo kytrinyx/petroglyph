@@ -2,13 +2,9 @@ require 'json'
 
 require 'petroglyph/scope'
 require 'petroglyph/engine'
-require 'petroglyph/railtie' if defined?(Rails) && Rails.version =~ /^3/
 
 module Petroglyph
   class << self
-    def register!
-      require 'petroglyph/template'
-    end    
     def partial(filename, template_filename)
       basedir = File.dirname(template_filename)
       [basedir, "#{basedir}/partials"].each do |dir|
@@ -22,7 +18,11 @@ end
 
 if defined?(Padrino)
   require 'padrino-core'
-  Padrino.after_load { Petroglyph.register! }
+  Padrino.after_load do
+    require 'petroglyph/template'
+  end
 elsif defined?(Rails) && Rails.version =~ /^2/
-  Petroglyph.register!
+  require 'petroglyph/template'
+elsif defined?(Rails) && Rails.version =~ /^3/
+  require 'petroglyph/railtie'
 end

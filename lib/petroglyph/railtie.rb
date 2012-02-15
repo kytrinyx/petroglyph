@@ -3,7 +3,7 @@ module Petroglyph
 
     initializer "petroglyph.initialize" do |app|
       ActiveSupport.on_load(:action_view) do
-        Petroglyph.register!
+        require 'petroglyph/template'
       end
     end
   end

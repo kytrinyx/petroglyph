@@ -1,22 +1,5 @@
-# TILT Template
 if defined?(Tilt)
-  class PetroglyphTemplate < Tilt::Template
-    def initialize_engine
-      return if defined?(::Petroglyph)
-      require_template_library 'petroglyph'
-    end
-
-    def prepare
-      options = @options.merge(:source_location => file)
-      @engine = ::Petroglyph::Engine.new(data, options)
-    end
-
-    def evaluate(scope, locals, &block)
-      @engine.render(scope, locals, &block)
-    end
-  end
-
-  Tilt.register 'pg', PetroglyphTemplate
+  require 'tilt/petroglyph'
 end
 
 # Rails 2.X Template
