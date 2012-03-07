@@ -1,0 +1,1 @@
+ partial :the_partial, :thing => 'stuff'
