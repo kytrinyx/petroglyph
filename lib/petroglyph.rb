@@ -21,7 +21,7 @@ if defined? Padrino
 elsif defined? Sinatra
   require 'sinatra/petroglyph'
 elsif defined?(Rails) && Rails.version =~ /^2/
-  require 'petroglyph/template'
+  require 'rails/2.x/petroglyph'
 elsif defined?(Rails) && Rails.version =~ /^3/
   require 'petroglyph/railtie'
 end

@@ -3,7 +3,7 @@ module Petroglyph
 
     initializer "petroglyph.initialize" do |app|
       ActiveSupport.on_load(:action_view) do
-        require 'petroglyph/template'
+        require 'rails/3.x/petroglyph'
       end
     end
   end
