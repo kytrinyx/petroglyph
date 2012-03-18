@@ -1,6 +1,11 @@
 require 'spec_helper'
 
 describe Petroglyph::Engine do
+  specify "#to_hash" do
+    engine = Petroglyph::Engine.new('node :whatever => thing')
+    engine.to_hash({:thing => 'stuff'}).should eq({:whatever => 'stuff'})
+  end
+
   it "takes a template" do
     engine = Petroglyph::Engine.new('node :whatever => "nevermind"')
     engine.render.should eq({:whatever => "nevermind"}.to_json)

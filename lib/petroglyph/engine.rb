@@ -6,13 +6,16 @@ module Petroglyph
     end
 
     def render(context = Object.new, locals = {}, file = nil, &block)
+      to_hash(locals, file, context, &block).to_json
+    end
+
+    def to_hash(locals = {}, file = nil, context = Object.new, &block)
       scope = Scope.new(context, locals, file)
-      if @data
-        scope.instance_eval(@data)
-      else
-        scope.instance_eval(&block)
-      end
-      scope.value.to_json
+
+      scope.instance_eval(@data) if @data
+      scope.instance_eval(&block) if block_given?
+
+      scope.value
     end
   end
 end
