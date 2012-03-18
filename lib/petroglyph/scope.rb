@@ -76,8 +76,8 @@ module Petroglyph
 
     def partial(name, locals = {})
       data = Petroglyph.partial(name, file)
-      scope = Scope.new(@context, locals)
-      scope.instance_eval(data)
+      scope = Scope.new(@context, locals, file)
+      scope.instance_eval(data.to_s)
       merge scope.value
     end
 
