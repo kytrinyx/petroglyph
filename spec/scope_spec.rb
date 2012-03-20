@@ -246,5 +246,15 @@ describe Petroglyph::Scope do
       scope.value.should eq({:partial => {:thing => 'stuff'}})
     end
 
+    it "finds nested partials" do
+      scope = Petroglyph::Scope.new
+      scope.file = "spec/fixtures/views/some_template.pg"
+
+      scope.node :partial do
+        partial :nested_partial
+      end
+
+      scope.value.should eq({:partial => {:thing => 'stuff'}})
+    end
   end
 end
