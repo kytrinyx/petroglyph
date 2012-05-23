@@ -85,7 +85,7 @@ module Petroglyph
       if @locals and @locals.has_key?(method)
         @locals[method]
       elsif @context.respond_to?(method)
-        @context.send(method)
+        @context.send(method, *args)
       else
         super
       end
