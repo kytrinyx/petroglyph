@@ -205,7 +205,10 @@ describe Petroglyph::Scope do
 
   context "with partials" do
     it "renders a partial" do
-      Petroglyph.stub(:partial) { 'node :drink => "tea"' }
+      data = 'node :drink => "tea"'
+      p = eval "Proc.new{#{data}}"
+
+      Petroglyph.stub(:partial) { p }
 
       scope = Petroglyph::Scope.new
       scope.node :partial do
@@ -216,7 +219,10 @@ describe Petroglyph::Scope do
     end
 
     it "renders a partial with local variables" do
-      Petroglyph.stub(:partial) { 'node :drink => drink' }
+      data = 'node :drink => "tea"'
+      p = eval "Proc.new{#{data}}"
+
+      Petroglyph.stub(:partial) { p }
 
       scope = Petroglyph::Scope.new
       scope.node :partial do
