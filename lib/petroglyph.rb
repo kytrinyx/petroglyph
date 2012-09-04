@@ -5,13 +5,29 @@ require 'petroglyph/engine'
 
 module Petroglyph
   class << self
+
     def partial(filename, template_filename)
+      @partials ||= {}
+      path = full_path(filename, template_filename)
+
+      unless path
+        raise Exception.new("Could not find partial #{filename}")
+      end
+
+      @partials.fetch(path) { eval "Proc.new{#{File.read(path)}}" }
+    end
+
+    def full_path(filename, template_filename)
+      @paths ||= {}
+      key = "#{template_filename}:#{filename}"
+
+      return @paths[key] if @paths.has_key?(key)
+
       basedir = File.dirname(template_filename)
       [basedir, "#{basedir}/partials"].each do |dir|
         path = File.join(dir, "#{filename}.pg")
-        return File.read(path) if File.exist?(path)
+        return path if File.exist?(path)
       end
-      raise Exception.new("Could not find partial #{filename}")
     end
   end
 end
