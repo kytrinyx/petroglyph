@@ -240,6 +240,17 @@ describe Petroglyph::Scope do
       scope.value.should eq({:partial => {:drink => 'tea'}})
     end
 
+    it "defaults locals to match the name of the partial" do
+      Petroglyph.stub(:partial) { 'node :drink => drink' }
+
+      scope = Petroglyph::Scope.new(nil, {:drink => 'coffee'})
+      scope.node :drinks do
+        partial :drink
+      end
+
+      scope.value.should eq({:drinks => {:drink => 'coffee'}})
+    end
+
     it "finds the partial" do
       scope = Petroglyph::Scope.new
       scope.file = "spec/fixtures/views/some_template.pg"
