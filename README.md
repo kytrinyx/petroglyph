@@ -2,6 +2,8 @@
 
 A simple, terse, and unsurprising ruby dsl to create json views.
 
+[![Build Status](https://secure.travis-ci.org/kytrinyx/petroglyph.png?branch=master)](http://travis-ci.org/kytrinyx/petroglyph)
+
 ## Usage
 
 Add a node with a simple value:
