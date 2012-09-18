@@ -92,14 +92,28 @@ describe Petroglyph::Scope do
   end
 
   context "with locals" do
-    it "resolves values" do
-      scope = Petroglyph::Scope.new(nil, {:thing => 'stuff'})
+    let(:scope) { Petroglyph::Scope.new(nil, {:thing => 'stuff'}) }
 
+    before(:each) do
       scope.instance_eval do
         node :thing => thing
       end
+    end
 
+    it "resolves values" do
       scope.value.should eq({:thing => 'stuff'})
+    end
+
+    it "responds to existing locals" do
+      scope.respond_to?(:thing).should == true
+    end
+
+    it "doesn't respond to missing locals" do
+      scope.respond_to?(:not_a_thing).should == false
+    end
+
+    it "doesn't clobber :respond_to?" do
+      scope.respond_to?(:value).should == true
     end
   end
 

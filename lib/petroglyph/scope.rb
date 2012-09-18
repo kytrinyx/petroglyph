@@ -81,14 +81,24 @@ module Petroglyph
       merge scope.value
     end
 
+    def respond_to?(method)
+      super || local?(method)
+    end
+
     def method_missing(method, *args, &block)
-      if @locals and @locals.has_key?(method)
+      if local?(method)
         @locals[method]
       elsif @context.respond_to?(method)
         @context.send(method, *args)
       else
         super
       end
+    end
+
+    private
+
+    def local?(method)
+      @locals and @locals.has_key?(method)
     end
 
   end
