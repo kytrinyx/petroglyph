@@ -33,9 +33,8 @@ describe "Sinatra integration" do
   it "overshadows the controller methods" do
     # look at /views/fixtures/post.pg
     # and line 18 of this file
-    pending "right now if you refer to a local var 'post' in the template, you will accidentally call sinatra's post method" do
-      post '/'
-      last_response.body.should eq "{\"post\":\"a post\"}"
-    end
+    pending "right now if you refer to a local var 'post' in the template, you will accidentally call sinatra's post method"
+    post '/'
+    last_response.body.should eq "{\"post\":\"a post\"}"
   end
 end
