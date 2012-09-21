@@ -32,7 +32,7 @@ describe "Tilt integration" do
   context "with partials" do
     it "loads the partial" do
       template = Tilt::PetroglyphTemplate.new('spec/fixtures/views/with_partial.pg')
-      template.render.should eq('{"root":{"thing":"stuff"}}')
+      template.render.should eq('{"root":{"beverage":"stuff"}}')
     end
 
     it "loads the partial from a subdirectory" do
