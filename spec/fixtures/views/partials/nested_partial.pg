@@ -1,1 +1,1 @@
- partial :the_partial, :thing => 'stuff'
+ partial :the_partial, :drink => 'stuff'
