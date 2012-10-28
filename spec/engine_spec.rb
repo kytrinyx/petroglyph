@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Petroglyph::Engine do
-  specify "#to_hash" do
+  specify "#to_hash takes local variables and passes them to the template" do
     engine = Petroglyph::Engine.new('node :beverage => drink')
     engine.to_hash({:drink => 'espresso'}).should eq({:beverage => 'espresso'})
   end
