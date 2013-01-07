@@ -88,12 +88,17 @@ In your controller:
 
 Support for partials is non-standard at this time: create a subdirectory in the directory that your template lives in and call it `partials`.
 
+## Sinatra
+
+This works with version 1.3 of Sinatra. It may work with earlier versions.
+
+There is a known incompatibility in Sinatra versions prior to 1.3 where a local variable named `post` will crash with Sinatra's HTTP `post` action.
+The same goes for `get`, `head`, `put`, etc, but these are less likely to be resources in your application.
+
 
 ## Caveat
 
 There is currently no support for instance variables in Sinatra and Rails 3.
-
-Avoid using `post` as a local variable name in sinatra. Since the template context in sinatra is the controller, calling `post` from your template will call the http `post` action. Same goes for `get`, `head`, `put`, etc, but these are less likely to be resources in your application.
 
 ## Related Projects
 
