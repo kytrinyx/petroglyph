@@ -1,7 +1,4 @@
 # Makes Petroglyph available through Tilt.
-# Also contains a utility function that will
-# be added to Sinatra if Sinatra is defined.
-
 require 'tilt'
 require 'petroglyph'
 
