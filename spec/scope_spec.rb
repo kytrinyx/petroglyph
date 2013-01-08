@@ -1,5 +1,9 @@
 require 'spec_helper'
 
+def fake_partial(s)
+  eval "Proc.new{#{s}}"
+end
+
 describe Petroglyph::Scope do
 
   it 'takes a simple string value' do
@@ -223,7 +227,7 @@ describe Petroglyph::Scope do
 
   context 'with partials' do
     it 'renders a partial' do
-      Petroglyph.stub(:partial) { 'node :drink => "tea"' }
+      Petroglyph.stub(:partial) { fake_partial('node :drink => "tea"') }
 
       scope = Petroglyph::Scope.new
       scope.node :partial do
@@ -234,7 +238,7 @@ describe Petroglyph::Scope do
     end
 
     it 'renders a partial with local variables' do
-      Petroglyph.stub(:partial) { 'node :drink => drink' }
+      Petroglyph.stub(:partial) { fake_partial('node :drink => drink') }
 
       scope = Petroglyph::Scope.new
       scope.node :partial do
@@ -245,7 +249,7 @@ describe Petroglyph::Scope do
     end
 
     it 'defaults locals to match the name of the partial' do
-      Petroglyph.stub(:partial) { 'node :beverage => drink' }
+      Petroglyph.stub(:partial) { fake_partial('node :beverage => drink') }
 
       scope = Petroglyph::Scope.new(nil, {:drink => 'coffee'})
       scope.node :beverages do
