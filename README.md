@@ -112,3 +112,10 @@ Other json templating libraries exist, some of which also generate XML.
 * [Jsonify](https://github.com/bsiggelkow/jsonify)
 * [Representative](https://github.com/mdub/representative)
 * [Tokamak](https://github.com/abril/tokamak)
+
+## License
+
+MIT License
+
+Copyright (c) 2012 Katrina Owen
+
