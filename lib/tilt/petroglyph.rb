@@ -10,14 +10,16 @@ module Tilt
       require_template_library 'petroglyph'
     end
 
-    def prepare; end
+    def prepare
+      @engine = Petroglyph::Engine.new(data)
+    end
 
     def precompiled_template(locals)
       data.to_str
     end
 
     def evaluate(scope = Object.new, locals = {}, &block)
-      Petroglyph::Engine.new(data).render(scope, locals, file, &block)
+      @engine.render(scope, locals, file, &block)
     end
   end
   register PetroglyphTemplate, 'pg'
