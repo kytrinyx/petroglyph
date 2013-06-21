@@ -100,6 +100,14 @@ You need to require the Sinatra petroglyph extension:
 require 'sinatra/petroglyph'
 ```
 
+Then you can use the `pg` helper method in your endpoints:
+
+```ruby
+get '/api/v1/widgets' do
+  pg :widgets, :locals => {:widgets => Widget.all}
+end
+```
+
 ### Gotcha
 
 There is a known incompatibility in Sinatra versions prior to 1.3 where a local variable named `post` will crash with Sinatra's HTTP `post` action.
