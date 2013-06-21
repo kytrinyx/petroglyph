@@ -92,6 +92,16 @@ Support for partials is non-standard at this time: create a subdirectory in the 
 
 This works with version 1.3 of Sinatra. It may work with earlier versions.
 
+### Config
+
+You need to require the Sinatra petroglyph extension:
+
+```ruby
+require 'sinatra/petroglyph'
+```
+
+### Gotcha
+
 There is a known incompatibility in Sinatra versions prior to 1.3 where a local variable named `post` will crash with Sinatra's HTTP `post` action.
 The same goes for `get`, `head`, `put`, etc, but these are less likely to be resources in your application.
 
