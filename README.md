@@ -81,7 +81,11 @@ You can also explicitly reference each item in the collection if you need to:
 
 Partials have been implemented. This defaults to looking for a file in the same file as the template, or in a subdirectory called `partials`.
 
-This can be overridden by re-implementing the `Petroglyph.partial(name)` method.
+There is a shortcut if you're looping over a collection to render a partial for each item in the collection:
+
+    collection :teas => teas, :partial => :tea
+
+The name of the partials subdirectory can be overridden by re-implementing the `Petroglyph.partial(name)` method.
 
     collection :teas => teas do |tea|
       # partial(template_name, local_variables)

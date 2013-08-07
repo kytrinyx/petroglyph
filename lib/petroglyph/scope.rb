@@ -39,9 +39,15 @@ module Petroglyph
       end
     end
 
-    def collection(input, &block)
+    def collection(args, &block)
       @value ||= {}
-      name, items = input.first
+      name, items = args.first
+
+      if args.length == 2
+        singular = args[:partial]
+        block = eval "Proc.new{|item| partial #{singular.inspect}, #{singular.inspect} => item}"
+      end
+
       results = []
       items.each do |item|
         scope = sub_scope(item)

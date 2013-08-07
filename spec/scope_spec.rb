@@ -223,6 +223,15 @@ describe Petroglyph::Scope do
 
       scope.value.should eq({:beverages => []})
     end
+
+    it 'has a convenience handler' do
+      Petroglyph.stub(:partial) { fake_partial('node :drink => drink.type') }
+
+      scope = Petroglyph::Scope.new
+      scope.collection :drinks => drinks, :partial => :drink
+
+      scope.value.should eq({:drinks => [{:drink => 'tea'}, {:drink => 'coffee'}]})
+    end
   end
 
   context 'with partials' do
