@@ -50,6 +50,14 @@ Conveniently define which attributes to include. Create a new node with a differ
     end
     => '{"person":{"name":"Alice","gender":"female","job":"surgeon"}}'
 
+If you don't want to namespace the object, you can use `merge` in place of `node`:
+
+    merge alice do
+      attributes :name, :gender
+      node :job => alice.profession
+    end
+    => '{"name":"Alice","gender":"female","job":"surgeon"}'
+
 Iterate through collections:
 
     wulong = Tea.new(:type => 'wulong')
