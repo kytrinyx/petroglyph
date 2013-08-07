@@ -41,8 +41,7 @@ module Petroglyph
 
     def collection(input, &block)
       @value ||= {}
-      name = input.keys.first
-      items = input.values.first
+      name, items = input.first
       results = []
       items.each do |item|
         scope = sub_scope(item)
