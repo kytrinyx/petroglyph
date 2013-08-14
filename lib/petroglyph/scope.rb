@@ -39,13 +39,23 @@ module Petroglyph
       end
     end
 
-    def collection(args, &block)
+    def collection(args, hash = nil, &block)
       @value ||= {}
-      name, items = args.first
 
-      if args.length == 2
-        singular = args[:partial]
-        block = eval "Proc.new{|item| partial #{singular.inspect}, #{singular.inspect} => item}"
+      if args.is_a?(Hash)
+        name, items = args.first
+
+        if args.length == 2
+          singular = args[:partial]
+          block = eval "Proc.new{|item| partial #{singular.inspect}, #{singular.inspect} => item}"
+        end
+      else
+        items = args
+        
+        unless hash.nil?
+          singular = hash[:partial]
+          block = eval "Proc.new{|item| partial #{singular.inspect}, #{singular.inspect} => item}"
+        end
       end
 
       results = []
@@ -54,7 +64,12 @@ module Petroglyph
         scope.instance_exec(item, &block)
         results << scope.value
       end
-      @value[name] = results
+
+      if args.is_a?(Hash)
+        @value[name] = results
+      else
+        @value.empty? ? @value = results : @value.merge!(Hash.new(results))
+      end
     end
 
     def merge(hash, &block)
@@ -64,7 +79,27 @@ module Petroglyph
         scope.instance_eval(&block)
         hash = scope.value
       end
+
       @value.merge!(hash)
+    end
+
+    def merge_collection(args, &block)
+      @value ||= {}
+      # name, items = args.first
+
+      # if args.length == 2
+      #   singular = args[:partial]
+      #   block = eval "Proc.new{|item| partial #{singular.inspect}, #{singular.inspect} => item}"
+      # end
+      items = args  
+
+      results = []
+      items.each do |item|
+        scope = sub_scope(item)
+        scope.instance_exec(item, &block)
+        results << scope.value
+      end
+       @value.empty? ? @value = results : @value.merge!(Hash.new(results))
     end
 
     def attributes(*args)
@@ -101,6 +136,11 @@ module Petroglyph
         super
       end
     end
+
+    # def value
+    #   return { @value } if @value.is_a?(Array)
+    #   @value
+    # end
 
     private
 

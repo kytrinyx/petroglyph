@@ -29,6 +29,69 @@ describe Petroglyph::Scope do
     scope.value.should eq({:beverage => {'espresso' => {:shots => 2}}})
   end
 
+
+
+
+  context 'with an array' do
+    let(:tea) { OpenStruct.new(:type => 'tea', :temperature => 'hot') }
+    let(:coffee) { OpenStruct.new(:type => 'coffee', :temperature => 'warm') }
+    let(:drinks) { [tea, coffee] }
+    
+    it 'merges array' do
+      scope = Petroglyph::Scope.new
+      scope.collection drinks do
+        attributes :type, :temperature
+      end
+
+      scope.value.should eq([{:type => 'tea', :temperature => 'hot'}, {:type => 'coffee', :temperature => 'warm'}])
+    end
+
+    it 'evaluates attributes on explicitly named items' do
+      scope = Petroglyph::Scope.new
+      scope.collection drinks do |drink|
+        node :drink do
+          node :type => drink.type
+        end
+        node :prep => "Make water #{drink.temperature}."
+      end
+
+      scope.value.should eq([{:drink => {:type => 'tea'}, :prep => 'Make water hot.'}, {:drink => {:type => 'coffee'}, :prep => 'Make water warm.'}])
+    end
+
+    it 'evaluates object attributes within a sub node' do
+      scope = Petroglyph::Scope.new
+      scope.collection drinks do |drink|
+        node :drink => drink do
+          attributes :type
+        end
+        node :prep => "Water should be #{drink.temperature}."
+      end
+
+      scope.value.should eq([{:drink => {:type => 'tea'}, :prep => 'Water should be hot.'}, {:drink => {:type => 'coffee'}, :prep => 'Water should be warm.'}])
+    end
+
+    it 'evaluates an empty collection to an empty array' do
+      scope = Petroglyph::Scope.new
+      scope.collection [] do |drink|
+        node :drink => drink
+      end
+
+      scope.value.should eq([])
+    end
+
+    it 'has a convenience handler' do
+      Petroglyph.stub(:partial) { fake_partial('node :drink => drink.type') }
+
+      scope = Petroglyph::Scope.new
+      scope.collection drinks, :partial => :drink
+
+      scope.value.should eq([{:drink => 'tea'}, {:drink => 'coffee'}])
+    end
+  end
+
+
+
+
   it 'lets you process what you merge in a block' do
     scope = Petroglyph::Scope.new
     drink = 'Zombie Driver'
@@ -176,6 +239,7 @@ describe Petroglyph::Scope do
       scope.value.should eq({:beverage => {:name => 'darjeeling', :temperature => 'piping hot'}})
     end
   end
+
 
   context 'with a collection' do
     let(:tea) { OpenStruct.new(:type => 'tea', :temperature => 'hot') }
