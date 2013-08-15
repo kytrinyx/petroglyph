@@ -126,6 +126,5 @@ module Petroglyph
       singular = args[:partial]
       eval "Proc.new{|item| partial #{singular.inspect}, #{singular.inspect} => item}"
     end 
-
   end
 end
