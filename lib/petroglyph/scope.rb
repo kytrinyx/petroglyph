@@ -39,13 +39,21 @@ module Petroglyph
       end
     end
 
-    def collection(args, &block)
+    def collection(args, hash = nil, &block)
       @value ||= {}
-      name, items = args.first
 
-      if args.length == 2
-        singular = args[:partial]
-        block = eval "Proc.new{|item| partial #{singular.inspect}, #{singular.inspect} => item}"
+      if args.is_a?(Hash)
+        name, items = args.first
+
+        if args.length == 2
+          block = eval_block(args)
+        end
+      else
+        items = args
+
+        unless hash.nil?
+          block = eval_block(hash)
+        end
       end
 
       results = []
@@ -54,7 +62,12 @@ module Petroglyph
         scope.instance_exec(item, &block)
         results << scope.value
       end
-      @value[name] = results
+
+      if args.is_a?(Hash)
+        @value[name] = results
+      else
+        @value.empty? ? @value = results : @value.merge!(Hash.new(results))
+      end
     end
 
     def merge(hash, &block)
@@ -64,6 +77,7 @@ module Petroglyph
         scope.instance_eval(&block)
         hash = scope.value
       end
+
       @value.merge!(hash)
     end
 
@@ -108,5 +122,9 @@ module Petroglyph
       @locals and @locals.has_key?(method)
     end
 
+    def eval_block(args)
+      singular = args[:partial]
+      eval "Proc.new{|item| partial #{singular.inspect}, #{singular.inspect} => item}"
+    end 
   end
 end
