@@ -46,15 +46,13 @@ module Petroglyph
         name, items = args.first
 
         if args.length == 2
-          singular = args[:partial]
-          block = eval "Proc.new{|item| partial #{singular.inspect}, #{singular.inspect} => item}"
+          block = eval_block(args)
         end
       else
         items = args
-        
+
         unless hash.nil?
-          singular = hash[:partial]
-          block = eval "Proc.new{|item| partial #{singular.inspect}, #{singular.inspect} => item}"
+          block = eval_block(hash)
         end
       end
 
@@ -81,25 +79,6 @@ module Petroglyph
       end
 
       @value.merge!(hash)
-    end
-
-    def merge_collection(args, &block)
-      @value ||= {}
-      # name, items = args.first
-
-      # if args.length == 2
-      #   singular = args[:partial]
-      #   block = eval "Proc.new{|item| partial #{singular.inspect}, #{singular.inspect} => item}"
-      # end
-      items = args  
-
-      results = []
-      items.each do |item|
-        scope = sub_scope(item)
-        scope.instance_exec(item, &block)
-        results << scope.value
-      end
-       @value.empty? ? @value = results : @value.merge!(Hash.new(results))
     end
 
     def attributes(*args)
@@ -137,16 +116,16 @@ module Petroglyph
       end
     end
 
-    # def value
-    #   return { @value } if @value.is_a?(Array)
-    #   @value
-    # end
-
     private
 
     def local?(method)
       @locals and @locals.has_key?(method)
     end
+
+    def eval_block(args)
+      singular = args[:partial]
+      eval "Proc.new{|item| partial #{singular.inspect}, #{singular.inspect} => item}"
+    end 
 
   end
 end
