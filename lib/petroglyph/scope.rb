@@ -18,8 +18,8 @@ module Petroglyph
     end
 
     def node(input, &block)
-      if input.is_a?(Hash) && input.keys.size > 1
-        raise ArgumentError, "node can't deal with more than one key at a time"
+      if input.is_a?(Hash) && input.keys.size != 1
+        raise ArgumentError, "node can only deal with one key at a time"
       end
 
       if input.is_a?(Hash)
