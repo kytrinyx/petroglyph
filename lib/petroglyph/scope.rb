@@ -19,15 +19,14 @@ module Petroglyph
 
     def node(input, &block)
       @value ||= {}
-      scope = nil
-      name = nil
-      value = nil
+
       if input.is_a?(Hash)
         raise ArgumentError, "node can't deal with more than one key at a time" if input.keys.size > 1
         name = input.keys.first
         value = input.values.first
       else
         name = input
+        value = nil
       end
 
       if block_given?
@@ -125,6 +124,6 @@ module Petroglyph
     def eval_block(args)
       singular = args[:partial]
       eval "Proc.new{|item| partial #{singular.inspect}, #{singular.inspect} => item}"
-    end 
+    end
   end
 end
