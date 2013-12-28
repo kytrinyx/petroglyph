@@ -67,10 +67,10 @@ module Petroglyph
 
     def merge(hash, &block)
       if block_given?
-        hash = sub_scoped(hash, &block)
+        @value.merge!(sub_scoped(hash, &block))
+      else
+        @value.merge!(hash)
       end
-
-      @value.merge!(hash)
     end
 
     def attributes(*args)
