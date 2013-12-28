@@ -1,20 +1,20 @@
 module Petroglyph
   class Scope
-    attr_accessor :value, :object, :file
+    attr_accessor :file
+    attr_reader :object, :value
 
-    def initialize(context = nil, locals = {}, template_filename = nil, parent_scope = nil)
+    def initialize(context = nil, locals = {}, template_filename = nil, parent_scope = nil, object=nil)
       @file = template_filename
       @context = context
       self.copy_instance_variables_from(@context, [:@assigns, :@helpers]) if self.respond_to?(:copy_instance_variables_from)
       @locals = locals
       @parent_scope = parent_scope
       @value = {}
+      @object = object
     end
 
     def sub_scope(object = nil)
-      scope = Scope.new(@context, @locals, @file, self)
-      scope.object = object
-      scope
+      Scope.new(@context, @locals, @file, self, object)
     end
 
     def node(input, &block)
@@ -37,20 +37,16 @@ module Petroglyph
       end
     end
 
-    def collection(args, hash = nil, &block)
+    def collection(args, hash = {}, &block)
       if args.is_a?(Hash)
         name, items = args.first
-
-        if args.length == 2
-          block = eval_block(args)
-        end
+        partial = args[:partial]
       else
         items = args
-
-        unless hash.nil?
-          block = eval_block(hash)
-        end
+        partial = hash[:partial]
       end
+
+      block = eval_block(partial) if partial
 
       results = items.map do |item|
         sub_scoped(item, &block)
@@ -114,8 +110,7 @@ module Petroglyph
       @locals and @locals.has_key?(method)
     end
 
-    def eval_block(args)
-      singular = args[:partial]
+    def eval_block(singular)
       eval "Proc.new{|item| partial #{singular.inspect}, #{singular.inspect} => item}"
     end
 
