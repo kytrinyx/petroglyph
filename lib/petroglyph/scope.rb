@@ -70,15 +70,13 @@ module Petroglyph
     end
 
     def attributes(*args)
-      fragment = {}
       args.each do |method|
         if @object.respond_to?(method)
-          fragment[method] = @object.send(method)
+          @value[method] = @object.send(method)
         else
-          fragment[method] = @object[method]
+          @value[method] = @object[method]
         end
       end
-      merge fragment
     end
 
     def partial(name, locals = nil)
