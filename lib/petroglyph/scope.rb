@@ -58,8 +58,10 @@ module Petroglyph
 
       if name
         @value[name] = results
+      elsif @value.empty?
+        @value = results
       else
-        @value = results if @value.empty?
+        fail "A collection was calculated but thrown away"
       end
     end
 
