@@ -33,7 +33,7 @@ module Petroglyph
       if block_given?
         scope = sub_scope(value)
         scope.instance_eval(&block)
-        @value[name] = scope.value if scope.value
+        @value[name] = scope.value
       else
         @value[name] = value
       end
