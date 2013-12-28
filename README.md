@@ -3,7 +3,7 @@
 A simple, terse, and unsurprising ruby dsl to create json views.
 
 [![Build Status](https://secure.travis-ci.org/kytrinyx/petroglyph.png?branch=master)](http://travis-ci.org/kytrinyx/petroglyph)
-[![Code Climate](https://codeclimate.com/badge.png)](https://codeclimate.com/github/kytrinyx/petroglyph)
+[![Code Climate](https://codeclimate.com/github/kytrinyx/petroglyph.png)](https://codeclimate.com/github/kytrinyx/petroglyph)
 
 ## Usage
 
