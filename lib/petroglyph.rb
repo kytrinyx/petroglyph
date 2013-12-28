@@ -6,12 +6,15 @@ require 'petroglyph/engine'
 module Petroglyph
   class << self
     def partial(filename, template_filename)
-      paths(filename, template_filename).each do |path|
-        if File.exist?(path)
-          return eval "Proc.new{#{File.read(path)}}"
-        end
+      found_path = paths(filename, template_filename).find do |path|
+                     File.exist?(path)
+                   end
+
+      if found_path
+        eval "Proc.new{#{File.read(found_path)}}"
+      else
+        raise Exception.new("Could not find partial #{filename}")
       end
-      raise Exception.new("Could not find partial #{filename}")
     end
 
     def paths(filename, template_filename)
