@@ -19,9 +19,11 @@ module Petroglyph
 
     def node(input, &block)
       @value ||= {}
+      if input.is_a?(Hash) && input.keys.size > 1
+        raise ArgumentError, "node can't deal with more than one key at a time"
+      end
 
       if input.is_a?(Hash)
-        raise ArgumentError, "node can't deal with more than one key at a time" if input.keys.size > 1
         name = input.keys.first
         value = input.values.first
       else
