@@ -54,11 +54,10 @@ module Petroglyph
         end
       end
 
-      results = []
-      items.each do |item|
+      results = items.map do |item|
         scope = sub_scope(item)
         scope.instance_exec(item, &block)
-        results << scope.value
+        scope.value
       end
 
       if args.is_a?(Hash)
