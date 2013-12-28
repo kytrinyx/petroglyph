@@ -8,7 +8,7 @@ module Petroglyph
       self.copy_instance_variables_from(@context, [:@assigns, :@helpers]) if self.respond_to?(:copy_instance_variables_from)
       @locals = locals
       @parent_scope = parent_scope
-      @value = nil
+      @value = {}
     end
 
     def sub_scope(object = nil)
@@ -18,7 +18,6 @@ module Petroglyph
     end
 
     def node(input, &block)
-      @value ||= {}
       if input.is_a?(Hash) && input.keys.size > 1
         raise ArgumentError, "node can't deal with more than one key at a time"
       end
@@ -41,8 +40,6 @@ module Petroglyph
     end
 
     def collection(args, hash = nil, &block)
-      @value ||= {}
-
       if args.is_a?(Hash)
         name, items = args.first
 
@@ -72,7 +69,6 @@ module Petroglyph
     end
 
     def merge(hash, &block)
-      @value ||= {}
       if block_given?
         scope = sub_scope(hash)
         scope.instance_eval(&block)
