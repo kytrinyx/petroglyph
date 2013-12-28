@@ -31,9 +31,7 @@ module Petroglyph
       end
 
       if block_given?
-        scope = sub_scope(value)
-        scope.instance_eval(&block)
-        @value[name] = scope.value
+        @value[name] = sub_scoped(value, &block)
       else
         @value[name] = value
       end
@@ -55,9 +53,7 @@ module Petroglyph
       end
 
       results = items.map do |item|
-        scope = sub_scope(item)
-        scope.instance_exec(item, &block)
-        scope.value
+        sub_scoped(item, &block)
       end
 
       if name
@@ -69,9 +65,7 @@ module Petroglyph
 
     def merge(hash, &block)
       if block_given?
-        scope = sub_scope(hash)
-        scope.instance_eval(&block)
-        hash = scope.value
+        hash = sub_scoped(hash, &block)
       end
 
       @value.merge!(hash)
@@ -121,6 +115,12 @@ module Petroglyph
     def eval_block(args)
       singular = args[:partial]
       eval "Proc.new{|item| partial #{singular.inspect}, #{singular.inspect} => item}"
+    end
+
+    def sub_scoped(value, &block)
+      scope = sub_scope(value)
+      scope.instance_exec(value, &block)
+      scope.value
     end
   end
 end
