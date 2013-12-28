@@ -60,7 +60,7 @@ module Petroglyph
         scope.value
       end
 
-      if args.is_a?(Hash)
+      if name
         @value[name] = results
       else
         @value.empty? ? @value = results : @value.merge!(Hash.new(results))
