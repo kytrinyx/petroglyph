@@ -59,7 +59,7 @@ module Petroglyph
       if name
         @value[name] = results
       else
-        @value.empty? ? @value = results : @value.merge!(Hash.new(results))
+        @value = results if @value.empty?
       end
     end
 
