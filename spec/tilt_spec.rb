@@ -3,7 +3,7 @@ require 'tilt/petroglyph'
 
 describe "Tilt integration" do
   it "registers .pg as a petroglyph template" do
-    Tilt.mappings['pg'].should include(Tilt::PetroglyphTemplate)
+    Tilt.registered?('pg').should eq true
   end
 
   it "renders from a file" do
